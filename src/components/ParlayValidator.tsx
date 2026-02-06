@@ -19,8 +19,8 @@ const COLORS = {
   textNegative: "#f87171",
   textYellow: "#facc15",
   ratingA: "#22c55e",
-  ratingB: "#3b82f6",
-  ratingC: "#facc15",
+  ratingB: "#22c55e",
+  ratingC: "#86efac",
   ratingF: "#ef4444",
 };
 
@@ -68,12 +68,11 @@ const ConfettiParticle: React.FC<{
 }> = ({ index, delay }) => {
   const frame = useCurrentFrame();
 
-  // Random properties for each particle
   const startX = (index % 5) * 80 - 160 + Math.sin(index * 0.7) * 30;
   const startY = -50;
   const endY = 200;
   const rotation = index * 45;
-  const colors = [COLORS.ratingA, COLORS.ratingB, COLORS.textYellow, COLORS.textPrimary];
+  const colors = [COLORS.ratingA, COLORS.textYellow, COLORS.textPrimary, "#60a5fa"];
   const color = colors[index % colors.length];
   const size = 8 + (index % 3) * 4;
 
@@ -168,6 +167,16 @@ const PickRow: React.FC<{ pick: PickData; index: number; delay: number }> = ({
             fontSize: 14,
             color: COLORS.textTertiary,
             fontFamily: "Open Sans, sans-serif",
+            marginBottom: 2,
+          }}
+        >
+          {pick.league} · {pick.market}
+        </div>
+        <div
+          style={{
+            fontSize: 14,
+            color: COLORS.textSecondary,
+            fontFamily: "Open Sans, sans-serif",
           }}
         >
           {pick.selection}
@@ -201,9 +210,9 @@ const PickRow: React.FC<{ pick: PickData; index: number; delay: number }> = ({
 
 export const ParlayValidator: React.FC<ParlayValidatorProps> = ({
   picks = [
-    { id: "1", teams: "Chiefs vs 49ers", league: "NFL", market: "Spread", selection: "Chiefs -3.5", odds: 1.91, ev: 9.7 },
-    { id: "2", teams: "Lakers vs Celtics", league: "NBA", market: "Over/Under", selection: "Over 218.5", odds: 1.87, ev: 8.2 },
-    { id: "3", teams: "Liverpool vs Arsenal", league: "EPL", market: "Both Score", selection: "Yes", odds: 1.72, ev: 7.1 },
+    { id: "1", teams: "América vs Guadalajara", league: "Liga MX", market: "Ganador", selection: "América", odds: 1.91, ev: 9.7 },
+    { id: "2", teams: "Barcelona vs Real Madrid", league: "La Liga", market: "Ambos Anotan", selection: "Sí", odds: 1.87, ev: 8.2 },
+    { id: "3", teams: "Liverpool vs Arsenal", league: "Premier League", market: "Total Goles +2.5", selection: "Over 2.5", odds: 1.72, ev: 7.1 },
   ],
   parlay = {
     combinedOdds: 6.12,
@@ -367,7 +376,7 @@ export const ParlayValidator: React.FC<ParlayValidatorProps> = ({
                   marginBottom: 8,
                 }}
               >
-                Cálculo de Odds
+                Cálculo de Momios
               </div>
               <div
                 style={{

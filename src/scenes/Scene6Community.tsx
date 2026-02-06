@@ -96,16 +96,18 @@ export const Scene6Community: React.FC = () => {
         <CommunityShowcase
           prizePool={5000}
           leaderboard={[
-            { rank: 1, username: "ElProMX", profit: 687, isHighlighted: false },
-            { rank: 2, username: "ValueHunter", profit: 598, isHighlighted: false },
-            { rank: 3, username: "RodrigoEV", profit: 512, isHighlighted: true },
-            { rank: 4, username: "SharpBettor", profit: 487, isHighlighted: false },
+            { position: 1, username: "ElProMX", profit: 687, record: "28-9" },
+            { position: 2, username: "ValueHunter", profit: 598, record: "24-10" },
+            { position: 3, username: "RodrigoEV", profit: 512, record: "21-11", isCurrentUser: true },
+            { position: 4, username: "SharpBettor", profit: 487, record: "20-12" },
           ]}
-          discordMembers={2847}
-          discordMessages={[
-            { username: "Carlos", message: "¿Análisis del Chiefs?" },
-            { username: "Maria", message: "Yo veo value en Over..." },
-          ]}
+          discord={{
+            members: 2847,
+            messages: [
+              { user: "Carlos", text: "América vs Guadalajara: veo EV+ en Ganador local" },
+              { user: "Maria", text: "Barcelona-Madrid, Ambos Anotan a 2.45 tiene valor" },
+            ],
+          }}
         />
       </div>
     </AbsoluteFill>

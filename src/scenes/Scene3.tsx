@@ -4,7 +4,7 @@ import {
   interpolate,
   useCurrentFrame,
 } from "remotion";
-import { EVPickCardPro } from "../components/EVPickCardPro";
+import { EVPickCard } from "../components/EVPickCard";
 
 export const Scene3EVPicks: React.FC = () => {
   const frame = useCurrentFrame();
@@ -38,7 +38,7 @@ export const Scene3EVPicks: React.FC = () => {
         transform: `translateY(${translateY}px)`,
       }}
     >
-      <EVPickCardPro />
+      <EVPickCard />
     </AbsoluteFill>
   );
 };

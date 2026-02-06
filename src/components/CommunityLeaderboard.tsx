@@ -10,9 +10,9 @@ import {
 const COLORS = {
   bgCard: "#1f2937",
   bgSection: "#374151",
-  bgCurrentUser: "rgba(20, 83, 45, 0.2)", // bg-green-900/20
+  bgCurrentUser: "rgba(20, 83, 45, 0.2)",
   borderDefault: "#374151",
-  borderRow: "#4b5563", // border-gray-600
+  borderRow: "#4b5563",
   borderHighlight: "#22c55e",
   textPrimary: "#ffffff",
   textSecondary: "#d1d5db",
@@ -20,6 +20,9 @@ const COLORS = {
   textPositive: "#22c55e",
   textYellow: "#facc15",
   badgeGreen: "#22c55e",
+  positionGold: "#facc15",
+  positionSilver: "#d1d5db",
+  positionBronze: "#fb923c",
 };
 
 interface RankingUser {
@@ -48,6 +51,13 @@ const getMedal = (position: number): string => {
   if (position === 2) return "🥈";
   if (position === 3) return "🥉";
   return "";
+};
+
+const getPositionColor = (position: number): string => {
+  if (position === 1) return COLORS.positionGold;
+  if (position === 2) return COLORS.positionSilver;
+  if (position === 3) return COLORS.positionBronze;
+  return COLORS.textPositive;
 };
 
 const CTASection: React.FC = () => {
@@ -162,6 +172,8 @@ const RankingRow: React.FC<{
     config: { damping: 12, stiffness: 100 },
   });
 
+  const posColor = getPositionColor(user.position);
+
   return (
     <div
       style={{
@@ -191,7 +203,7 @@ const RankingRow: React.FC<{
           style={{
             fontSize: 24,
             fontWeight: 700,
-            color: COLORS.textPositive,
+            color: posColor,
             fontFamily: "Montserrat, sans-serif",
             width: 50,
           }}
@@ -516,7 +528,7 @@ export const CommunityLeaderboard: React.FC<CommunityLeaderboardProps> = ({
             marginBottom: 20,
           }}
         >
-          📊 Top 5 del Mes
+          Top 5 del Mes
         </h3>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>

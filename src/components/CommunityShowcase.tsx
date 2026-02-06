@@ -19,6 +19,33 @@ const COLORS = {
   textPositive: "#22c55e",
   textYellow: "#facc15",
   discordBlue: "#5865F2",
+  positionGold: "#facc15",
+  positionSilver: "#d1d5db",
+  positionBronze: "#fb923c",
+};
+
+// Discord SVG icon
+const DiscordIcon: React.FC<{ size?: number; color?: string }> = ({
+  size = 28,
+  color = COLORS.discordBlue,
+}) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill={color}>
+    <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z" />
+  </svg>
+);
+
+const getPositionColor = (position: number): string => {
+  if (position === 1) return COLORS.positionGold;
+  if (position === 2) return COLORS.positionSilver;
+  if (position === 3) return COLORS.positionBronze;
+  return COLORS.textTertiary;
+};
+
+const getMedal = (position: number): string => {
+  if (position === 1) return "🥇";
+  if (position === 2) return "🥈";
+  if (position === 3) return "🥉";
+  return "";
 };
 
 interface LeaderboardUser {
@@ -29,28 +56,150 @@ interface LeaderboardUser {
   isCurrentUser?: boolean;
 }
 
-interface DiscordMessage {
+interface DiscordMessageData {
   user: string;
   text: string;
 }
 
+interface PrizeBreakdown {
+  first: number;
+  second: number;
+  third: number;
+}
+
 interface CommunityShowcaseProps {
   prizePool?: number;
+  prizes?: PrizeBreakdown;
   leaderboard?: LeaderboardUser[];
   discord?: {
     members: number;
-    messages: DiscordMessage[];
+    messages: DiscordMessageData[];
   };
 }
 
-const getMedal = (position: number): string => {
-  if (position === 1) return "🥇";
-  if (position === 2) return "🥈";
-  if (position === 3) return "🥉";
-  return "";
+// Podium component for top 3
+const Podium: React.FC<{
+  leaderboard: LeaderboardUser[];
+  delay: number;
+}> = ({ leaderboard, delay }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+
+  const top3 = leaderboard.filter((u) => u.position <= 3);
+  const first = top3.find((u) => u.position === 1);
+  const second = top3.find((u) => u.position === 2);
+  const third = top3.find((u) => u.position === 3);
+
+  const podiumOrder = [second, first, third];
+  const heights = [120, 160, 90];
+  const medals = ["🥈", "🥇", "🥉"];
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "flex-end",
+        justifyContent: "center",
+        gap: 12,
+        marginBottom: 20,
+      }}
+    >
+      {podiumOrder.map((user, index) => {
+        if (!user) return null;
+        const itemDelay = delay + index * 10;
+
+        const opacity = interpolate(frame, [itemDelay, itemDelay + 20], [0, 1], {
+          extrapolateRight: "clamp",
+          extrapolateLeft: "clamp",
+        });
+
+        const slideY = interpolate(frame, [itemDelay, itemDelay + 25], [30, 0], {
+          extrapolateRight: "clamp",
+          extrapolateLeft: "clamp",
+        });
+
+        const scale = spring({
+          frame: frame - itemDelay,
+          fps,
+          from: 0.8,
+          to: 1,
+          config: { damping: 12, stiffness: 100 },
+        });
+
+        const posColor = getPositionColor(user.position);
+
+        return (
+          <div
+            key={user.position}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              opacity,
+              transform: `translateY(${slideY}px) scale(${scale})`,
+            }}
+          >
+            {/* Medal */}
+            <span style={{ fontSize: 32, marginBottom: 8 }}>{medals[index]}</span>
+
+            {/* Username */}
+            <span
+              style={{
+                fontSize: 14,
+                fontWeight: 600,
+                color: COLORS.textPrimary,
+                fontFamily: "Montserrat, sans-serif",
+                marginBottom: 4,
+              }}
+            >
+              {user.username}
+            </span>
+
+            {/* Profit */}
+            <span
+              style={{
+                fontSize: 16,
+                fontWeight: 700,
+                color: COLORS.textYellow,
+                fontFamily: "Montserrat, sans-serif",
+                marginBottom: 8,
+              }}
+            >
+              +${user.profit}
+            </span>
+
+            {/* Podium bar */}
+            <div
+              style={{
+                width: 100,
+                height: heights[index],
+                backgroundColor: posColor,
+                borderRadius: "8px 8px 0 0",
+                opacity: 0.3,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <span
+                style={{
+                  fontSize: 28,
+                  fontWeight: 800,
+                  color: posColor,
+                  fontFamily: "Montserrat, sans-serif",
+                }}
+              >
+                {user.position}
+              </span>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
 };
 
-// Leaderboard row
+// Leaderboard row (for positions 4+)
 const LeaderboardRow: React.FC<{
   user: LeaderboardUser;
   delay: number;
@@ -107,12 +256,11 @@ const LeaderboardRow: React.FC<{
     >
       {/* Left side */}
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        <span style={{ fontSize: 24, width: 30 }}>{getMedal(user.position)}</span>
         <span
           style={{
             fontSize: 18,
             fontWeight: 700,
-            color: COLORS.textPositive,
+            color: COLORS.textTertiary,
             fontFamily: "Montserrat, sans-serif",
             width: 40,
           }}
@@ -173,8 +321,8 @@ const LeaderboardRow: React.FC<{
 };
 
 // Discord message with typing animation
-const DiscordMessage: React.FC<{
-  message: DiscordMessage;
+const DiscordMsg: React.FC<{
+  message: DiscordMessageData;
   delay: number;
 }> = ({ message, delay }) => {
   const frame = useCurrentFrame();
@@ -277,6 +425,7 @@ const DiscordMessage: React.FC<{
 
 export const CommunityShowcase: React.FC<CommunityShowcaseProps> = ({
   prizePool = 5000,
+  prizes = { first: 2500, second: 1500, third: 1000 },
   leaderboard = [
     { position: 1, username: "ElProMX", profit: 687, record: "28-9" },
     { position: 2, username: "ValueHunter", profit: 598, record: "24-10" },
@@ -286,8 +435,8 @@ export const CommunityShowcase: React.FC<CommunityShowcaseProps> = ({
   discord = {
     members: 2847,
     messages: [
-      { user: "ElProMX", text: "¿Análisis del Chiefs para hoy?" },
-      { user: "ValueHunter", text: "Yo veo value en Over 2.5..." },
+      { user: "ElProMX", text: "América vs Guadalajara: veo EV+ en Ganador local" },
+      { user: "ValueHunter", text: "Barcelona-Madrid, Ambos Anotan a 2.45 tiene valor" },
     ],
   },
 }) => {
@@ -349,6 +498,9 @@ export const CommunityShowcase: React.FC<CommunityShowcaseProps> = ({
     })
   );
 
+  // Leaderboard rows for positions 4+
+  const remainingUsers = leaderboard.filter((u) => u.position > 3);
+
   return (
     <div
       style={{
@@ -387,7 +539,7 @@ export const CommunityShowcase: React.FC<CommunityShowcaseProps> = ({
               marginBottom: 8,
             }}
           >
-            🎮 LEADERBOARD 2025
+            🏆 LEADERBOARD 2026
           </h2>
           <p
             style={{
@@ -396,19 +548,33 @@ export const CommunityShowcase: React.FC<CommunityShowcaseProps> = ({
               color: COLORS.textYellow,
               fontFamily: "Montserrat, sans-serif",
               margin: 0,
+              marginBottom: 4,
             }}
           >
             ${prizePool.toLocaleString()} MXN en premios
           </p>
+          <p
+            style={{
+              fontSize: 13,
+              color: COLORS.textTertiary,
+              fontFamily: "Open Sans, sans-serif",
+              margin: 0,
+            }}
+          >
+            1ro: ${prizes.first.toLocaleString()} | 2do: ${prizes.second.toLocaleString()} | 3ro: ${prizes.third.toLocaleString()}
+          </p>
         </div>
 
-        {/* Rankings */}
+        {/* Podium for top 3 */}
+        <Podium leaderboard={leaderboard} delay={15} />
+
+        {/* Remaining rankings (4+) */}
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-          {leaderboard.map((user, index) => (
+          {remainingUsers.map((user, index) => (
             <LeaderboardRow
               key={user.position}
               user={user}
-              delay={15 + index * 10}
+              delay={45 + index * 10}
             />
           ))}
         </div>
@@ -435,7 +601,7 @@ export const CommunityShowcase: React.FC<CommunityShowcaseProps> = ({
           }}
         >
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <span style={{ fontSize: 28 }}>💬</span>
+            <DiscordIcon size={28} color={COLORS.discordBlue} />
             <span
               style={{
                 fontSize: 20,
@@ -481,7 +647,7 @@ export const CommunityShowcase: React.FC<CommunityShowcaseProps> = ({
         {/* Messages */}
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           {discord.messages.map((message, index) => (
-            <DiscordMessage
+            <DiscordMsg
               key={index}
               message={message}
               delay={discordDelay + 25 + index * 20}

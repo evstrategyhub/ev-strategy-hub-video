@@ -14,31 +14,29 @@ const COLORS = {
   textPrimary: "#ffffff",
   textSecondary: "#d1d5db",
   textTertiary: "#9ca3af",
-  textMuted: "#6b7280", // text-gray-500
+  textMuted: "#6b7280",
   textPositive: "#22c55e",
-  textBlue: "#60a5fa", // text-blue-400
-  textYellow: "#facc15", // text-yellow-400
+  textBlue: "#60a5fa",
+  textYellow: "#facc15",
   lineGreen: "#10b981",
   gridLine: "#374151",
 };
 
 interface MetricCardProps {
-  icon: string;
-  iconColor: string;
   label: string;
   value: string | number;
   valueColor?: string;
+  labelColor: string;
   subtext?: string;
   subtextColor?: string;
   delay: number;
 }
 
 const MetricCard: React.FC<MetricCardProps> = ({
-  icon,
-  iconColor,
   label,
   value,
   valueColor = COLORS.textPrimary,
+  labelColor,
   subtext,
   subtextColor = COLORS.textMuted,
   delay,
@@ -83,12 +81,14 @@ const MetricCard: React.FC<MetricCardProps> = ({
           marginBottom: 12,
         }}
       >
-        <span style={{ fontSize: 24, color: iconColor }}>{icon}</span>
         <span
           style={{
-            fontSize: 18,
-            color: COLORS.textTertiary,
-            fontFamily: "Open Sans, sans-serif",
+            fontSize: 14,
+            fontWeight: 700,
+            color: labelColor,
+            fontFamily: "Montserrat, sans-serif",
+            textTransform: "uppercase",
+            letterSpacing: 0.5,
           }}
         >
           {label}
@@ -149,7 +149,7 @@ export const BankrollGraph: React.FC<BankrollGraphProps> = ({
     activeBets: 7,
     totalBets: 52,
     bestMonth: { name: "Enero 2026", profit: 487.3 },
-    bestLeague: { name: "Premier League", profit: 425.8 },
+    bestLeague: { name: "Liga MX", profit: 425.8 },
   },
   chartData = [
     { date: "01", profit: 0 },
@@ -184,14 +184,6 @@ export const BankrollGraph: React.FC<BankrollGraphProps> = ({
     frame,
     [chartDelay + 10, chartDelay + 50],
     [2000, currentBankroll],
-    { extrapolateRight: "clamp", extrapolateLeft: "clamp" }
-  );
-
-  // Line drawing animation
-  const lineProgress = interpolate(
-    frame,
-    [chartDelay + 20, chartDelay + 80],
-    [0, 1],
     { extrapolateRight: "clamp", extrapolateLeft: "clamp" }
   );
 
@@ -263,8 +255,7 @@ export const BankrollGraph: React.FC<BankrollGraphProps> = ({
         }}
       >
         <MetricCard
-          icon="📈"
-          iconColor={COLORS.textPositive}
+          labelColor={COLORS.textPositive}
           label="Win Rate"
           value={`${metrics.winRate}%`}
           valueColor={COLORS.textPrimary}
@@ -273,31 +264,27 @@ export const BankrollGraph: React.FC<BankrollGraphProps> = ({
           delay={5}
         />
         <MetricCard
-          icon="💰"
-          iconColor={COLORS.textPositive}
+          labelColor={COLORS.textPositive}
           label="ROI"
           value={`+${metrics.roi}%`}
           valueColor={COLORS.textPositive}
           delay={12}
         />
         <MetricCard
-          icon="🎯"
-          iconColor={COLORS.textBlue}
-          label="Active Bets"
+          labelColor={COLORS.textBlue}
+          label="Apuestas Activas"
           value={metrics.activeBets}
           delay={19}
         />
         <MetricCard
-          icon="📊"
-          iconColor={COLORS.textBlue}
-          label="Total Bets"
+          labelColor={COLORS.textBlue}
+          label="Total Apuestas"
           value={metrics.totalBets}
           delay={26}
         />
         <MetricCard
-          icon="📅"
-          iconColor={COLORS.textYellow}
-          label="Best Month"
+          labelColor={COLORS.textYellow}
+          label="Mejor Mes"
           value={metrics.bestMonth.name}
           valueColor={COLORS.textPrimary}
           subtext={`+$${metrics.bestMonth.profit.toFixed(2)}`}
@@ -305,9 +292,8 @@ export const BankrollGraph: React.FC<BankrollGraphProps> = ({
           delay={33}
         />
         <MetricCard
-          icon="🏆"
-          iconColor={COLORS.textYellow}
-          label="Best League"
+          labelColor={COLORS.textYellow}
+          label="Mejor Liga"
           value={metrics.bestLeague.name}
           valueColor={COLORS.textPrimary}
           subtext={`+$${metrics.bestLeague.profit.toFixed(2)}`}
@@ -439,13 +425,11 @@ export const BankrollGraph: React.FC<BankrollGraphProps> = ({
               config: { damping: 10, stiffness: 150 },
             });
 
-            // Larger dots for milestone values
             const baseRadius = isMilestone(point.profit) ? 10 : 6;
             const radius = baseRadius * dotScale;
 
             return (
               <g key={i}>
-                {/* Glow effect for milestones */}
                 {isMilestone(point.profit) && (
                   <circle
                     cx={point.x}

@@ -9,15 +9,15 @@ import {
 // Design system colors
 const COLORS = {
   bgCard: "#1f2937",
-  bgSection: "#374151", // bg-gray-700
+  bgSection: "#374151",
   borderDefault: "#374151",
-  borderHighlight: "#22c55e", // border-green-500
+  borderHighlight: "#22c55e",
   textPrimary: "#ffffff",
   textSecondary: "#d1d5db",
   textTertiary: "#9ca3af",
-  textPositive: "#4ade80", // text-green-400
-  textNegative: "#f87171", // text-red-400
-  highlightGreen: "#22c55e", // bg-green-500
+  textPositive: "#4ade80",
+  textNegative: "#f87171",
+  highlightGreen: "#22c55e",
 };
 
 interface PickData {
@@ -111,7 +111,6 @@ const PickCard: React.FC<{ pick: PickData; delay: number }> = ({
             {pick.league}
           </div>
         </div>
-        {/* X button visual */}
         <div
           style={{
             color: COLORS.textNegative,
@@ -172,7 +171,7 @@ const PickCard: React.FC<{ pick: PickData; delay: number }> = ({
               marginBottom: 4,
             }}
           >
-            Odds
+            Momio
           </div>
           <div
             style={{
@@ -238,20 +237,20 @@ export const ParlayBuilder: React.FC<ParlayBuilderProps> = ({
   picks = [
     {
       id: "1",
-      teams: "Chiefs vs 49ers",
-      league: "NFL",
-      market: "Spread",
-      selection: "Chiefs -3.5",
+      teams: "América vs Guadalajara",
+      league: "Liga MX",
+      market: "Ganador",
+      selection: "América",
       odds: 1.91,
       stake: 50,
       profit: 45.5,
     },
     {
       id: "2",
-      teams: "Lakers vs Celtics",
-      league: "NBA",
-      market: "Over/Under",
-      selection: "Over 218.5",
+      teams: "Barcelona vs Real Madrid",
+      league: "La Liga",
+      market: "Ambos Anotan",
+      selection: "Sí",
       odds: 1.87,
       stake: 50,
       profit: 43.5,
@@ -336,7 +335,7 @@ export const ParlayBuilder: React.FC<ParlayBuilderProps> = ({
             marginBottom: 24,
           }}
         >
-          📊 Parlay Combinado
+          Parlay Combinado
         </h3>
 
         {/* Stats Row */}
@@ -363,7 +362,7 @@ export const ParlayBuilder: React.FC<ParlayBuilderProps> = ({
                 marginBottom: 8,
               }}
             >
-              Odds Combinadas
+              Momios Combinados
             </div>
             <div
               style={{

@@ -16,6 +16,7 @@ const COLORS = {
   textTertiary: "#9ca3af",
   textPositive: "#22c55e",
   dayWin: "#22c55e",
+  dayLoss: "#ef4444",
   dayEmpty: "#374151",
 };
 
@@ -23,15 +24,17 @@ interface CalendarHeatmapProps {
   title?: string;
   totalDays?: number;
   winDays?: number[];
+  lossDays?: number[];
 }
 
 interface DayCellProps {
   index: number;
   isWin: boolean;
+  isLoss: boolean;
   delay: number;
 }
 
-const DayCell: React.FC<DayCellProps> = ({ index, isWin, delay }) => {
+const DayCell: React.FC<DayCellProps> = ({ index, isWin, isLoss, delay }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
@@ -48,13 +51,15 @@ const DayCell: React.FC<DayCellProps> = ({ index, isWin, delay }) => {
     config: { damping: 12, stiffness: 200 },
   });
 
+  const bgColor = isWin ? COLORS.dayWin : isLoss ? COLORS.dayLoss : COLORS.dayEmpty;
+
   return (
     <div
       style={{
         width: 36,
         height: 36,
         borderRadius: 6,
-        backgroundColor: isWin ? COLORS.dayWin : COLORS.dayEmpty,
+        backgroundColor: bgColor,
         opacity,
         transform: `scale(${scale})`,
       }}
@@ -66,6 +71,7 @@ export const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({
   title = "30 DÍAS APOSTANDO",
   totalDays = 30,
   winDays = [0, 2, 3, 5, 6, 7, 8, 10, 11, 12, 14, 15, 17, 18, 20, 22, 24],
+  lossDays = [1, 4, 9, 13, 16, 19, 21, 23, 25, 26],
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -127,6 +133,7 @@ export const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({
   const cells = Array.from({ length: 35 }, (_, i) => ({
     index: i,
     isWin: i < totalDays && winDays.includes(i),
+    isLoss: i < totalDays && lossDays.includes(i),
     isActive: i < totalDays,
   }));
 
@@ -211,6 +218,7 @@ export const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({
               <DayCell
                 index={cell.index}
                 isWin={cell.isWin}
+                isLoss={cell.isLoss}
                 delay={10 + i * 2}
               />
             ) : (
@@ -255,7 +263,6 @@ export const CalendarHeatmap: React.FC<CalendarHeatmapProps> = ({
           >
             días con ganancias
           </span>
-          <span style={{ fontSize: 24 }}>🎯</span>
         </div>
       </div>
     </div>

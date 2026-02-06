@@ -22,22 +22,18 @@ const COLORS = {
 
 interface PickItem {
   id: string;
-  match: string;
+  teams: string;
+  market: string;
   selection: string;
   odds: number;
   ev: number;
-}
-
-interface StakeCalculation {
-  pickId: string;
-  amount: number;
+  kellyStake: number;
 }
 
 interface StrategyBuilderProps {
   bankroll?: number;
   method?: "straight" | "kelly";
   picks?: PickItem[];
-  stakes?: StakeCalculation[];
 }
 
 // Checkbox with animation
@@ -67,7 +63,7 @@ const AnimatedCheckbox: React.FC<{ delay: number; checked: boolean }> = ({
         width: 24,
         height: 24,
         borderRadius: 6,
-        border: `2px solid ${checked ? COLORS.textPositive : COLORS.borderDefault}`,
+        border: `2px solid ${checked ? COLORS.borderActive : COLORS.borderDefault}`,
         backgroundColor: checked ? COLORS.textPositive : "transparent",
         display: "flex",
         alignItems: "center",
@@ -150,7 +146,7 @@ const PickRow: React.FC<{
             marginBottom: 4,
           }}
         >
-          {pick.match}
+          {pick.teams}
         </div>
         <div
           style={{
@@ -159,7 +155,7 @@ const PickRow: React.FC<{
             fontFamily: "Open Sans, sans-serif",
           }}
         >
-          {pick.selection}
+          {pick.market}: {pick.selection}
         </div>
       </div>
 
@@ -172,7 +168,7 @@ const PickRow: React.FC<{
             fontFamily: "Montserrat, sans-serif",
           }}
         >
-          {pick.odds > 0 ? `+${pick.odds}` : pick.odds}
+          {pick.odds.toFixed(2)}
         </div>
         <div
           style={{
@@ -192,10 +188,9 @@ const PickRow: React.FC<{
 // Stake row with typing animation
 const StakeRow: React.FC<{
   pick: PickItem;
-  stake: number;
   index: number;
   delay: number;
-}> = ({ pick, stake, index, delay }) => {
+}> = ({ pick, delay }) => {
   const frame = useCurrentFrame();
 
   const opacity = interpolate(frame, [delay, delay + 15], [0, 1], {
@@ -210,7 +205,7 @@ const StakeRow: React.FC<{
 
   // Animated stake value
   const animatedStake = Math.round(
-    interpolate(frame, [delay, delay + 25], [0, stake], {
+    interpolate(frame, [delay, delay + 25], [0, pick.kellyStake], {
       extrapolateRight: "clamp",
       extrapolateLeft: "clamp",
     })
@@ -235,7 +230,7 @@ const StakeRow: React.FC<{
           fontFamily: "Open Sans, sans-serif",
         }}
       >
-        {pick.selection}
+        {pick.market}: {pick.selection}
       </span>
       <span
         style={{
@@ -255,21 +250,16 @@ export const StrategyBuilder: React.FC<StrategyBuilderProps> = ({
   bankroll = 5000,
   method = "kelly",
   picks = [
-    { id: "1", match: "Chiefs vs 49ers", selection: "Chiefs ML", odds: -150, ev: 9.7 },
-    { id: "2", match: "Liverpool vs Arsenal", selection: "Over 2.5", odds: -105, ev: 9.2 },
-    { id: "3", match: "Lakers vs Celtics", selection: "LeBron 25.5p", odds: -115, ev: 7.1 },
-  ],
-  stakes = [
-    { pickId: "1", amount: 87 },
-    { pickId: "2", amount: 91 },
-    { pickId: "3", amount: 73 },
+    { id: "1", teams: "América vs Guadalajara", market: "Ganador", selection: "América", odds: 1.91, ev: 9.7, kellyStake: 87 },
+    { id: "2", teams: "Barcelona vs Real Madrid", market: "Ambos Anotan", selection: "Sí", odds: 1.87, ev: 8.2, kellyStake: 91 },
+    { id: "3", teams: "Liverpool vs Arsenal", market: "Total Goles +2.5", selection: "Over 2.5", odds: 1.72, ev: 7.1, kellyStake: 73 },
   ],
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
   // Calculate totals
-  const totalStake = stakes.reduce((sum, s) => sum + s.amount, 0);
+  const totalStake = picks.reduce((sum, p) => sum + p.kellyStake, 0);
   const potentialProfit = 387; // Mock value
 
   // Container animation
@@ -528,7 +518,6 @@ export const StrategyBuilder: React.FC<StrategyBuilderProps> = ({
               <StakeRow
                 key={pick.id}
                 pick={pick}
-                stake={stakes[index]?.amount || 0}
                 index={index}
                 delay={stakesBaseDelay + index * 10}
               />
@@ -595,7 +584,7 @@ export const StrategyBuilder: React.FC<StrategyBuilderProps> = ({
                   fontFamily: "Montserrat, sans-serif",
                 }}
               >
-                +${animatedProfit} 📈
+                +${animatedProfit}
               </span>
             </div>
           </div>

@@ -9,21 +9,21 @@ import {
 // Design system colors
 const COLORS = {
   bgCard: "#1f2937",
-  bgHeader: "#111827", // bg-gray-900
-  bgRow: "rgba(55, 65, 81, 0.5)", // bg-gray-700/50
-  bgTab: "#374151", // bg-gray-700
-  bgEvBadge: "rgba(20, 83, 45, 0.3)", // bg-green-900/30
+  bgHeader: "#111827",
+  bgRow: "rgba(55, 65, 81, 0.5)",
+  bgTab: "#374151",
+  bgEvBadge: "rgba(20, 83, 45, 0.3)",
   borderDefault: "#374151",
   textPrimary: "#ffffff",
-  textSecondary: "#d1d5db", // text-gray-300
-  textTertiary: "#9ca3af", // text-gray-400
-  textPositive: "#4ade80", // text-green-400
-  ratingA: "#22c55e", // bg-green-500
+  textSecondary: "#d1d5db",
+  textTertiary: "#9ca3af",
+  textPositive: "#4ade80",
+  ratingA: "#22c55e",
   ratingB: "#22c55e",
-  ratingC: "#86efac", // bg-green-300
-  ratingD: "#facc15", // bg-yellow-400
-  ratingF: "#ef4444", // bg-red-500
-  buttonGreen: "#16a34a", // bg-green-600
+  ratingC: "#86efac",
+  ratingD: "#facc15",
+  ratingF: "#ef4444",
+  buttonGreen: "#16a34a",
 };
 
 const getRatingColor = (rating: string): string => {
@@ -47,7 +47,8 @@ interface MarketRow {
 }
 
 interface EVPickCardProps {
-  matchTitle?: string;
+  homeTeam?: string;
+  awayTeam?: string;
   league?: string;
   date?: string;
   mainEV?: string;
@@ -56,32 +57,33 @@ interface EVPickCardProps {
 }
 
 export const EVPickCard: React.FC<EVPickCardProps> = ({
-  matchTitle = "Chiefs vs 49ers",
-  league = "NFL",
+  homeTeam = "América",
+  awayTeam = "Guadalajara",
+  league = "Liga MX",
   date = "09 Feb 2026",
   mainEV = "+9.2%",
   mainRating = "B",
   markets = [
     {
-      bookmaker: "FanDuel",
-      market: "Spread",
-      odds: "-110",
+      bookmaker: "Caliente",
+      market: "Ganador",
+      odds: "1.91",
       probIA: "54.2%",
       ev: "+8.3%",
       rating: "B",
     },
     {
-      bookmaker: "DraftKings",
-      market: "Moneyline",
-      odds: "+145",
+      bookmaker: "Betway",
+      market: "Ambos Anotan",
+      odds: "2.45",
       probIA: "52.8%",
       ev: "+5.7%",
       rating: "C",
     },
     {
-      bookmaker: "BetMGM",
-      market: "Total O/U",
-      odds: "-105",
+      bookmaker: "bet365",
+      market: "Total Goles +2.5",
+      odds: "1.95",
       probIA: "58.1%",
       ev: "+12.4%",
       rating: "A",
@@ -91,25 +93,18 @@ export const EVPickCard: React.FC<EVPickCardProps> = ({
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // Count high EV picks (EV > 8%)
-  const highEvCount = markets.filter(
-    (m) => parseFloat(m.ev.replace("+", "").replace("%", "")) > 8
-  ).length;
-  const totalEvPicks = 23; // Mock total for the badge
+  const totalEvPicks = 23;
 
-  // Simulated scroll animation
   const scrollY = interpolate(frame, [60, 150], [0, -60], {
     extrapolateRight: "clamp",
     extrapolateLeft: "clamp",
   });
 
-  // Helper to check if EV > 8%
   const isHighEV = (ev: string) => {
     const value = parseFloat(ev.replace("+", "").replace("%", ""));
     return value > 8;
   };
 
-  // Card entrance animation
   const cardOpacity = interpolate(frame, [0, 20], [0, 1], {
     extrapolateRight: "clamp",
   });
@@ -121,17 +116,14 @@ export const EVPickCard: React.FC<EVPickCardProps> = ({
     config: { damping: 15, stiffness: 100 },
   });
 
-  // Header animation
   const headerOpacity = interpolate(frame, [10, 30], [0, 1], {
     extrapolateRight: "clamp",
   });
 
-  // Tabs animation
   const tabsOpacity = interpolate(frame, [25, 40], [0, 1], {
     extrapolateRight: "clamp",
   });
 
-  // Badge animation
   const badgeOpacity = interpolate(frame, [20, 35], [0, 1], {
     extrapolateRight: "clamp",
   });
@@ -173,7 +165,7 @@ export const EVPickCard: React.FC<EVPickCardProps> = ({
           zIndex: 10,
         }}
       >
-        🎯 {totalEvPicks} picks EV+ hoy
+        {totalEvPicks} picks EV+ hoy
       </div>
 
       {/* Main Card Container */}
@@ -211,7 +203,7 @@ export const EVPickCard: React.FC<EVPickCardProps> = ({
                   marginBottom: 4,
                 }}
               >
-                {matchTitle}
+                {homeTeam} vs {awayTeam}
               </div>
               <div
                 style={{
@@ -224,7 +216,6 @@ export const EVPickCard: React.FC<EVPickCardProps> = ({
               </div>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              {/* EV Badge */}
               <div
                 style={{
                   backgroundColor: COLORS.bgEvBadge,
@@ -238,7 +229,6 @@ export const EVPickCard: React.FC<EVPickCardProps> = ({
               >
                 EV: {mainEV}
               </div>
-              {/* Rating Badge */}
               <div
                 style={{
                   backgroundColor: getRatingColor(mainRating),
@@ -338,10 +328,8 @@ export const EVPickCard: React.FC<EVPickCardProps> = ({
               { extrapolateRight: "clamp", extrapolateLeft: "clamp" }
             );
 
-            // Check if this market has high EV
             const hasHighEV = isHighEV(market.ev);
 
-            // Glow animation for high EV rows
             const glowIntensity = hasHighEV
               ? interpolate(
                   frame,

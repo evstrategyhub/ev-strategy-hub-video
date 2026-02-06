@@ -18,8 +18,53 @@ const COLORS = {
   accentBlue: "#3b82f6",
 };
 
+// Simple SVG icons as inline components
+const ChartIcon: React.FC<{ size?: number; color?: string }> = ({
+  size = 48,
+  color = COLORS.textTertiary,
+}) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <line x1="18" y1="20" x2="18" y2="10" />
+    <line x1="12" y1="20" x2="12" y2="4" />
+    <line x1="6" y1="20" x2="6" y2="14" />
+  </svg>
+);
+
+const BrainIcon: React.FC<{ size?: number; color?: string }> = ({
+  size = 48,
+  color = COLORS.textTertiary,
+}) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 2a7 7 0 0 0-7 7c0 3 2 5.5 5 7v3h4v-3c3-1.5 5-4 5-7a7 7 0 0 0-7-7z" />
+    <line x1="9" y1="22" x2="15" y2="22" />
+  </svg>
+);
+
+const CompareIcon: React.FC<{ size?: number; color?: string }> = ({
+  size = 48,
+  color = COLORS.textTertiary,
+}) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+    <line x1="12" y1="2" x2="12" y2="22" />
+    <path d="M17 12H3" />
+    <path d="M21 12H17" />
+    <polyline points="15 16 19 12 15 8" />
+    <polyline points="9 8 5 12 9 16" />
+  </svg>
+);
+
+const CheckIcon: React.FC<{ size?: number; color?: string }> = ({
+  size = 48,
+  color = COLORS.textPositive,
+}) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round">
+    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+    <polyline points="22 4 12 14.01 9 11.01" />
+  </svg>
+);
+
 interface StepData {
-  icon: string;
+  icon: React.ReactNode;
   title: string;
   value: string;
   numericValue?: number;
@@ -125,9 +170,10 @@ const StepCard: React.FC<StepCardProps> = ({ step, stepNumber, delay }) => {
       {/* Icon */}
       <div
         style={{
-          fontSize: 48,
           marginBottom: 16,
           marginTop: 8,
+          display: "flex",
+          justifyContent: "center",
         }}
       >
         {step.icon}
@@ -202,14 +248,10 @@ const ArrowConnector: React.FC<{ delay: number }> = ({ delay }) => {
         transform: `scaleX(${scaleX})`,
       }}
     >
-      <div
-        style={{
-          fontSize: 28,
-          color: COLORS.textTertiary,
-        }}
-      >
-        →
-      </div>
+      <svg width={28} height={28} viewBox="0 0 24 24" fill="none" stroke={COLORS.textTertiary} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+        <line x1="5" y1="12" x2="19" y2="12" />
+        <polyline points="12 5 19 12 12 19" />
+      </svg>
     </div>
   );
 };
@@ -221,31 +263,31 @@ interface DashboardEVExplainerProps {
 export const DashboardEVExplainer: React.FC<DashboardEVExplainerProps> = ({
   steps = [
     {
-      icon: "📊",
-      title: "Bookmaker Odds",
-      value: "-110",
-      subtitle: "= 52.4% implied",
+      icon: <ChartIcon size={48} color={COLORS.accentBlue} />,
+      title: "Momios Casa",
+      value: "1.91",
+      subtitle: "= 52.4% implícita",
     },
     {
-      icon: "🧠",
-      title: "AI Model",
+      icon: <BrainIcon size={48} color={COLORS.accentBlue} />,
+      title: "Modelo IA",
       value: "58.3%",
       numericValue: 58.3,
-      subtitle: "true probability",
+      subtitle: "probabilidad real",
     },
     {
-      icon: "⚖️",
-      title: "Compare",
+      icon: <CompareIcon size={48} color={COLORS.accentBlue} />,
+      title: "Comparar",
       value: "5.9%",
       numericValue: 5.9,
-      subtitle: "edge found",
+      subtitle: "ventaja encontrada",
     },
     {
-      icon: "✅",
-      title: "EV+ Found",
+      icon: <CheckIcon size={48} color={COLORS.textPositive} />,
+      title: "EV+ Encontrado",
       value: "+5.9%",
       numericValue: 5.9,
-      subtitle: "BET THIS!",
+      subtitle: "APOSTAR",
       isHighlight: true,
     },
   ],

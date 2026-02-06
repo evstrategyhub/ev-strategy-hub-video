@@ -70,7 +70,7 @@ export const Scene3Picks: React.FC = () => {
             marginBottom: 12,
           }}
         >
-          🎯 Picks del Día
+          Picks del Día
         </h1>
         <p
           style={{
@@ -94,32 +94,33 @@ export const Scene3Picks: React.FC = () => {
         }}
       >
         <EVPickCard
-          matchTitle="Chiefs vs 49ers"
-          league="NFL"
+          homeTeam="América"
+          awayTeam="Guadalajara"
+          league="Liga MX"
           date="09 Feb 2026"
           mainEV="+9.2%"
           mainRating="B"
           markets={[
             {
-              bookmaker: "FanDuel",
-              market: "Spread",
-              odds: "-110",
+              bookmaker: "Caliente",
+              market: "Ganador",
+              odds: "1.91",
               probIA: "54.2%",
               ev: "+8.3%",
               rating: "B",
             },
             {
-              bookmaker: "DraftKings",
-              market: "Moneyline",
-              odds: "+145",
+              bookmaker: "Betway",
+              market: "Ambos Anotan",
+              odds: "2.45",
               probIA: "52.8%",
               ev: "+5.7%",
               rating: "C",
             },
             {
-              bookmaker: "BetMGM",
-              market: "Total O/U",
-              odds: "-105",
+              bookmaker: "bet365",
+              market: "Total Goles +2.5",
+              odds: "1.95",
               probIA: "58.1%",
               ev: "+12.4%",
               rating: "A",
