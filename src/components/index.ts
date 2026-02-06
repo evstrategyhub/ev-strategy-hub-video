@@ -1,3 +1,4 @@
+export { AppShell } from "./AppShell";
 export { DashboardStats } from "./DashboardStats";
 export { EVPickCard } from "./EVPickCard";
 export { ParlayBuilder } from "./ParlayBuilder";
