@@ -213,18 +213,36 @@ export const BankrollGraph: React.FC<BankrollGraphProps> = ({
       padding.top +
       graphHeight -
       (d.profit / maxProfit) * graphHeight,
+    profit: d.profit,
   }));
 
   const linePath = points
     .map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`)
     .join(" ");
 
-  // Create animated path (showing only portion based on lineProgress)
-  const visiblePointCount = Math.ceil(lineProgress * (points.length - 1)) + 1;
-  const visiblePoints = points.slice(0, visiblePointCount);
-  const animatedLinePath = visiblePoints
-    .map((p, i) => `${i === 0 ? "M" : "L"} ${p.x} ${p.y}`)
-    .join(" ");
+  // Calculate approximate path length for strokeDashoffset animation
+  const calculatePathLength = () => {
+    let length = 0;
+    for (let i = 1; i < points.length; i++) {
+      const dx = points[i].x - points[i - 1].x;
+      const dy = points[i].y - points[i - 1].y;
+      length += Math.sqrt(dx * dx + dy * dy);
+    }
+    return length;
+  };
+
+  const pathLength = calculatePathLength();
+
+  // Animate stroke using dashoffset for smooth drawing effect
+  const strokeDashoffset = interpolate(
+    frame,
+    [chartDelay + 20, chartDelay + 80],
+    [pathLength, 0],
+    { extrapolateRight: "clamp", extrapolateLeft: "clamp" }
+  );
+
+  // Check if a point is a milestone ($500 increments)
+  const isMilestone = (profit: number) => profit >= 500 && profit % 500 < 100;
 
   return (
     <div
@@ -391,33 +409,62 @@ export const BankrollGraph: React.FC<BankrollGraphProps> = ({
             </text>
           ))}
 
-          {/* Animated Line */}
+          {/* Animated Line with strokeDashoffset */}
           <path
-            d={animatedLinePath}
+            d={linePath}
             fill="none"
             stroke={COLORS.lineGreen}
             strokeWidth={4}
             strokeLinecap="round"
             strokeLinejoin="round"
+            strokeDasharray={pathLength}
+            strokeDashoffset={strokeDashoffset}
           />
 
-          {/* Animated Dots */}
-          {visiblePoints.map((point, i) => {
+          {/* Animated Dots - larger for milestones */}
+          {points.map((point, i) => {
+            const dotDelay = chartDelay + 20 + i * 8;
             const dotOpacity = interpolate(
               frame,
-              [chartDelay + 20 + i * 8, chartDelay + 30 + i * 8],
+              [dotDelay, dotDelay + 10],
               [0, 1],
               { extrapolateRight: "clamp", extrapolateLeft: "clamp" }
             );
+
+            const dotScale = spring({
+              frame: frame - dotDelay,
+              fps,
+              from: 0,
+              to: 1,
+              config: { damping: 10, stiffness: 150 },
+            });
+
+            // Larger dots for milestone values
+            const baseRadius = isMilestone(point.profit) ? 10 : 6;
+            const radius = baseRadius * dotScale;
+
             return (
-              <circle
-                key={i}
-                cx={point.x}
-                cy={point.y}
-                r={6}
-                fill={COLORS.lineGreen}
-                opacity={dotOpacity}
-              />
+              <g key={i}>
+                {/* Glow effect for milestones */}
+                {isMilestone(point.profit) && (
+                  <circle
+                    cx={point.x}
+                    cy={point.y}
+                    r={radius + 4}
+                    fill="none"
+                    stroke={COLORS.lineGreen}
+                    strokeWidth={2}
+                    opacity={dotOpacity * 0.4}
+                  />
+                )}
+                <circle
+                  cx={point.x}
+                  cy={point.y}
+                  r={radius}
+                  fill={COLORS.lineGreen}
+                  opacity={dotOpacity}
+                />
+              </g>
             );
           })}
         </svg>

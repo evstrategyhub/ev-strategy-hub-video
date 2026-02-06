@@ -4,6 +4,7 @@ import {
   interpolate,
   useCurrentFrame,
 } from "remotion";
+import { DashboardStats } from "../components/DashboardStats";
 
 export const Scene2Dashboard: React.FC = () => {
   const frame = useCurrentFrame();
@@ -37,17 +38,7 @@ export const Scene2Dashboard: React.FC = () => {
         transform: `translateY(${translateY}px)`,
       }}
     >
-      {/* TODO: Agregar contenido para Scene2 */}
-      <div
-        style={{
-          fontSize: 48,
-          fontWeight: 700,
-          color: "#9ca3af",
-          fontFamily: "Montserrat, sans-serif",
-        }}
-      >
-        Dashboard
-      </div>
+      <DashboardStats />
     </AbsoluteFill>
   );
 };

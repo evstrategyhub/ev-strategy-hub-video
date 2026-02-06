@@ -78,10 +78,36 @@ export const EVPickCard: React.FC<EVPickCardProps> = ({
       ev: "+5.7%",
       rating: "C",
     },
+    {
+      bookmaker: "BetMGM",
+      market: "Total O/U",
+      odds: "-105",
+      probIA: "58.1%",
+      ev: "+12.4%",
+      rating: "A",
+    },
   ],
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+
+  // Count high EV picks (EV > 8%)
+  const highEvCount = markets.filter(
+    (m) => parseFloat(m.ev.replace("+", "").replace("%", "")) > 8
+  ).length;
+  const totalEvPicks = 23; // Mock total for the badge
+
+  // Simulated scroll animation
+  const scrollY = interpolate(frame, [60, 150], [0, -60], {
+    extrapolateRight: "clamp",
+    extrapolateLeft: "clamp",
+  });
+
+  // Helper to check if EV > 8%
+  const isHighEV = (ev: string) => {
+    const value = parseFloat(ev.replace("+", "").replace("%", ""));
+    return value > 8;
+  };
 
   // Card entrance animation
   const cardOpacity = interpolate(frame, [0, 20], [0, 1], {
@@ -105,6 +131,19 @@ export const EVPickCard: React.FC<EVPickCardProps> = ({
     extrapolateRight: "clamp",
   });
 
+  // Badge animation
+  const badgeOpacity = interpolate(frame, [20, 35], [0, 1], {
+    extrapolateRight: "clamp",
+  });
+
+  const badgeScale = spring({
+    frame: frame - 20,
+    fps,
+    from: 0.5,
+    to: 1,
+    config: { damping: 10, stiffness: 150 },
+  });
+
   return (
     <div
       style={{
@@ -112,8 +151,31 @@ export const EVPickCard: React.FC<EVPickCardProps> = ({
         maxWidth: 950,
         opacity: cardOpacity,
         transform: `scale(${cardScale})`,
+        position: "relative",
       }}
     >
+      {/* Floating Badge - Top Right */}
+      <div
+        style={{
+          position: "absolute",
+          top: -12,
+          right: 20,
+          backgroundColor: COLORS.ratingA,
+          color: COLORS.textPrimary,
+          padding: "10px 20px",
+          borderRadius: 24,
+          fontSize: 16,
+          fontWeight: 700,
+          fontFamily: "Montserrat, sans-serif",
+          boxShadow: "0 4px 12px rgba(34, 197, 94, 0.4)",
+          opacity: badgeOpacity,
+          transform: `scale(${badgeScale})`,
+          zIndex: 10,
+        }}
+      >
+        🎯 {totalEvPicks} picks EV+ hoy
+      </div>
+
       {/* Main Card Container */}
       <div
         style={{
@@ -221,8 +283,13 @@ export const EVPickCard: React.FC<EVPickCardProps> = ({
           ))}
         </div>
 
-        {/* Table Content */}
-        <div style={{ padding: 32 }}>
+        {/* Table Content with scroll animation */}
+        <div
+          style={{
+            padding: 32,
+            transform: `translateY(${scrollY}px)`,
+          }}
+        >
           {/* Table Headers */}
           <div
             style={{
@@ -271,6 +338,19 @@ export const EVPickCard: React.FC<EVPickCardProps> = ({
               { extrapolateRight: "clamp", extrapolateLeft: "clamp" }
             );
 
+            // Check if this market has high EV
+            const hasHighEV = isHighEV(market.ev);
+
+            // Glow animation for high EV rows
+            const glowIntensity = hasHighEV
+              ? interpolate(
+                  frame,
+                  [rowDelay + 15, rowDelay + 30, rowDelay + 45, rowDelay + 60],
+                  [0.3, 0.6, 0.3, 0.6],
+                  { extrapolateRight: "clamp", extrapolateLeft: "clamp" }
+                )
+              : 0;
+
             return (
               <div
                 key={index}
@@ -285,6 +365,12 @@ export const EVPickCard: React.FC<EVPickCardProps> = ({
                   marginBottom: 12,
                   opacity: rowOpacity,
                   transform: `translateX(${rowX}px)`,
+                  border: hasHighEV
+                    ? `2px solid ${COLORS.ratingA}`
+                    : "2px solid transparent",
+                  boxShadow: hasHighEV
+                    ? `0 0 20px rgba(34, 197, 94, ${glowIntensity})`
+                    : "none",
                 }}
               >
                 <div
