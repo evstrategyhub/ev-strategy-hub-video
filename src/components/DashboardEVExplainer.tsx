@@ -130,7 +130,7 @@ const StepCard: React.FC<StepCardProps> = ({ step, stepNumber, delay }) => {
   return (
     <div
       style={{
-        flex: 1,
+        width: "100%",
         backgroundColor: COLORS.bgCard,
         borderRadius: 16,
         border: step.isHighlight
@@ -223,7 +223,7 @@ const StepCard: React.FC<StepCardProps> = ({ step, stepNumber, delay }) => {
   );
 };
 
-// Arrow connector between steps
+// Arrow connector between steps (vertical)
 const ArrowConnector: React.FC<{ delay: number }> = ({ delay }) => {
   const frame = useCurrentFrame();
 
@@ -232,7 +232,7 @@ const ArrowConnector: React.FC<{ delay: number }> = ({ delay }) => {
     extrapolateLeft: "clamp",
   });
 
-  const scaleX = interpolate(frame, [delay, delay + 20], [0, 1], {
+  const scaleY = interpolate(frame, [delay, delay + 20], [0, 1], {
     extrapolateRight: "clamp",
     extrapolateLeft: "clamp",
   });
@@ -243,14 +243,14 @@ const ArrowConnector: React.FC<{ delay: number }> = ({ delay }) => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        width: 40,
+        height: 36,
         opacity,
-        transform: `scaleX(${scaleX})`,
+        transform: `scaleY(${scaleY})`,
       }}
     >
       <svg width={28} height={28} viewBox="0 0 24 24" fill="none" stroke={COLORS.textTertiary} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-        <line x1="5" y1="12" x2="19" y2="12" />
-        <polyline points="12 5 19 12 12 19" />
+        <line x1="12" y1="5" x2="12" y2="19" />
+        <polyline points="19 12 12 19 5 12" />
       </svg>
     </div>
   );
@@ -320,21 +320,21 @@ export const DashboardEVExplainer: React.FC<DashboardEVExplainerProps> = ({
     <div
       style={{
         width: "100%",
-        maxWidth: 1000,
+        maxWidth: 1020,
       }}
     >
       {/* Title */}
       <div
         style={{
           textAlign: "center",
-          marginBottom: 40,
+          marginBottom: 28,
           opacity: titleOpacity,
           transform: `translateY(${titleY}px) scale(${titleScale})`,
         }}
       >
         <h1
           style={{
-            fontSize: 36,
+            fontSize: 32,
             fontWeight: 800,
             color: COLORS.textPrimary,
             fontFamily: "Montserrat, sans-serif",
@@ -346,7 +346,7 @@ export const DashboardEVExplainer: React.FC<DashboardEVExplainerProps> = ({
         </h1>
         <p
           style={{
-            fontSize: 18,
+            fontSize: 16,
             color: COLORS.textSecondary,
             fontFamily: "Open Sans, sans-serif",
             margin: 0,
@@ -356,12 +356,12 @@ export const DashboardEVExplainer: React.FC<DashboardEVExplainerProps> = ({
         </p>
       </div>
 
-      {/* Steps container */}
+      {/* Steps container - vertical stack */}
       <div
         style={{
           display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
+          flexDirection: "column",
+          alignItems: "stretch",
           gap: 0,
         }}
       >

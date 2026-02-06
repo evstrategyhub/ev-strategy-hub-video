@@ -24,7 +24,7 @@ export const CommunityLeaderboardComposition: React.FC = () => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        padding: 60,
+        padding: "40px 30px",
         opacity: entryOpacity,
         transform: `translateY(${entryY}px)`,
       }}

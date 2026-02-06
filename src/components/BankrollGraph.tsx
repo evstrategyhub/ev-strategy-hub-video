@@ -96,7 +96,7 @@ const MetricCard: React.FC<MetricCardProps> = ({
       </div>
       <div
         style={{
-          fontSize: 36,
+          fontSize: 28,
           fontWeight: 700,
           color: valueColor,
           fontFamily: "Montserrat, sans-serif",
@@ -188,8 +188,8 @@ export const BankrollGraph: React.FC<BankrollGraphProps> = ({
   );
 
   // Chart dimensions
-  const chartWidth = 800;
-  const chartHeight = 280;
+  const chartWidth = 960;
+  const chartHeight = 300;
   const padding = { top: 20, right: 30, bottom: 40, left: 60 };
   const graphWidth = chartWidth - padding.left - padding.right;
   const graphHeight = chartHeight - padding.top - padding.bottom;
@@ -240,7 +240,7 @@ export const BankrollGraph: React.FC<BankrollGraphProps> = ({
     <div
       style={{
         width: "100%",
-        maxWidth: 900,
+        maxWidth: 1020,
         display: "flex",
         flexDirection: "column",
         gap: 20,
@@ -250,8 +250,8 @@ export const BankrollGraph: React.FC<BankrollGraphProps> = ({
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(2, 1fr)",
-          gap: 16,
+          gridTemplateColumns: "repeat(3, 1fr)",
+          gap: 12,
         }}
       >
         <MetricCard
@@ -324,7 +324,7 @@ export const BankrollGraph: React.FC<BankrollGraphProps> = ({
         >
           <h3
             style={{
-              fontSize: 26,
+              fontSize: 22,
               fontWeight: 700,
               color: COLORS.textPrimary,
               fontFamily: "Montserrat, sans-serif",
@@ -335,7 +335,7 @@ export const BankrollGraph: React.FC<BankrollGraphProps> = ({
           </h3>
           <div
             style={{
-              fontSize: 42,
+              fontSize: 32,
               fontWeight: 700,
               color: COLORS.textPositive,
               fontFamily: "Montserrat, sans-serif",

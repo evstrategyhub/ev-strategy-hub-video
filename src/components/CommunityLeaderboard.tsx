@@ -112,14 +112,14 @@ const CTASection: React.FC = () => {
         style={{
           background: "linear-gradient(135deg, #10b981 0%, #3b82f6 100%)",
           borderRadius: 60,
-          padding: "20px 50px",
+          padding: "16px 40px",
           boxShadow: "0 20px 60px rgba(16,185,129,0.3)",
           transform: `scale(${pulse})`,
         }}
       >
         <span
           style={{
-            fontSize: 32,
+            fontSize: 26,
             fontWeight: 800,
             color: COLORS.textPrimary,
             fontFamily: "Montserrat, sans-serif",
@@ -133,7 +133,7 @@ const CTASection: React.FC = () => {
       <div style={{ opacity: urlOpacity }}>
         <span
           style={{
-            fontSize: 28,
+            fontSize: 22,
             fontWeight: 700,
             color: "#10b981",
             fontFamily: "Montserrat, sans-serif",
@@ -195,17 +195,17 @@ const RankingRow: React.FC<{
       {/* Left side */}
       <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
         {/* Medal */}
-        <span style={{ fontSize: 32, width: 40, textAlign: "center" }}>
+        <span style={{ fontSize: 26, width: 36, textAlign: "center" }}>
           {getMedal(user.position)}
         </span>
         {/* Position */}
         <span
           style={{
-            fontSize: 24,
+            fontSize: 20,
             fontWeight: 700,
             color: posColor,
             fontFamily: "Montserrat, sans-serif",
-            width: 50,
+            width: 44,
           }}
         >
           #{user.position}
@@ -213,7 +213,7 @@ const RankingRow: React.FC<{
         {/* Username */}
         <span
           style={{
-            fontSize: 22,
+            fontSize: 18,
             fontWeight: 500,
             color: COLORS.textPrimary,
             fontFamily: "Open Sans, sans-serif",
@@ -244,7 +244,7 @@ const RankingRow: React.FC<{
       <div style={{ textAlign: "right" }}>
         <div
           style={{
-            fontSize: 22,
+            fontSize: 18,
             fontWeight: 700,
             color: COLORS.textYellow,
             fontFamily: "Montserrat, sans-serif",
@@ -333,10 +333,10 @@ export const CommunityLeaderboard: React.FC<CommunityLeaderboardProps> = ({
     <div
       style={{
         width: "100%",
-        maxWidth: 900,
+        maxWidth: 1020,
         display: "flex",
         flexDirection: "column",
-        gap: 24,
+        gap: 20,
       }}
     >
       {/* Header Banner */}
@@ -345,7 +345,7 @@ export const CommunityLeaderboard: React.FC<CommunityLeaderboardProps> = ({
           backgroundColor: COLORS.bgCard,
           borderRadius: 12,
           border: `1px solid ${COLORS.borderDefault}`,
-          padding: 32,
+          padding: 24,
           textAlign: "center",
           opacity: bannerOpacity,
           transform: `scale(${bannerScale})`,
@@ -353,7 +353,7 @@ export const CommunityLeaderboard: React.FC<CommunityLeaderboardProps> = ({
       >
         <h1
           style={{
-            fontSize: 38,
+            fontSize: 30,
             fontWeight: 700,
             color: COLORS.textPrimary,
             fontFamily: "Montserrat, sans-serif",
@@ -365,7 +365,7 @@ export const CommunityLeaderboard: React.FC<CommunityLeaderboardProps> = ({
         </h1>
         <p
           style={{
-            fontSize: 20,
+            fontSize: 16,
             color: COLORS.textSecondary,
             fontFamily: "Open Sans, sans-serif",
             margin: 0,
@@ -376,7 +376,7 @@ export const CommunityLeaderboard: React.FC<CommunityLeaderboardProps> = ({
         </p>
         <p
           style={{
-            fontSize: 32,
+            fontSize: 26,
             fontWeight: 700,
             color: COLORS.textYellow,
             fontFamily: "Montserrat, sans-serif",
@@ -393,14 +393,14 @@ export const CommunityLeaderboard: React.FC<CommunityLeaderboardProps> = ({
           backgroundColor: COLORS.bgCard,
           borderRadius: 12,
           border: `2px solid ${COLORS.borderHighlight}`,
-          padding: 28,
+          padding: 24,
           opacity: userCardOpacity,
           transform: `translateY(${userCardY}px)`,
         }}
       >
         <h3
           style={{
-            fontSize: 26,
+            fontSize: 22,
             fontWeight: 600,
             color: COLORS.textPrimary,
             fontFamily: "Montserrat, sans-serif",
@@ -428,7 +428,7 @@ export const CommunityLeaderboard: React.FC<CommunityLeaderboardProps> = ({
           >
             <div
               style={{
-                fontSize: 40,
+                fontSize: 32,
                 fontWeight: 700,
                 color: COLORS.textPositive,
                 fontFamily: "Montserrat, sans-serif",
@@ -457,7 +457,7 @@ export const CommunityLeaderboard: React.FC<CommunityLeaderboardProps> = ({
           >
             <div
               style={{
-                fontSize: 40,
+                fontSize: 32,
                 fontWeight: 700,
                 color: COLORS.textYellow,
                 fontFamily: "Montserrat, sans-serif",
@@ -486,7 +486,7 @@ export const CommunityLeaderboard: React.FC<CommunityLeaderboardProps> = ({
           >
             <div
               style={{
-                fontSize: 40,
+                fontSize: 32,
                 fontWeight: 700,
                 color: COLORS.textPositive,
                 fontFamily: "Montserrat, sans-serif",
@@ -514,13 +514,13 @@ export const CommunityLeaderboard: React.FC<CommunityLeaderboardProps> = ({
           backgroundColor: COLORS.bgCard,
           borderRadius: 12,
           border: `1px solid ${COLORS.borderDefault}`,
-          padding: 28,
+          padding: 24,
           opacity: tableOpacity,
         }}
       >
         <h3
           style={{
-            fontSize: 26,
+            fontSize: 22,
             fontWeight: 600,
             color: COLORS.textPrimary,
             fontFamily: "Montserrat, sans-serif",

@@ -140,7 +140,7 @@ export const EVPickCard: React.FC<EVPickCardProps> = ({
     <div
       style={{
         width: "100%",
-        maxWidth: 950,
+        maxWidth: 1020,
         opacity: cardOpacity,
         transform: `scale(${cardScale})`,
         position: "relative",
@@ -181,7 +181,7 @@ export const EVPickCard: React.FC<EVPickCardProps> = ({
         <div
           style={{
             backgroundColor: COLORS.bgHeader,
-            padding: "20px 32px",
+            padding: "16px 24px",
             borderBottom: `1px solid ${COLORS.borderDefault}`,
             opacity: headerOpacity,
           }}
@@ -198,7 +198,7 @@ export const EVPickCard: React.FC<EVPickCardProps> = ({
                 style={{
                   color: COLORS.textPrimary,
                   fontWeight: 600,
-                  fontSize: 28,
+                  fontSize: 24,
                   fontFamily: "Montserrat, sans-serif",
                   marginBottom: 4,
                 }}
@@ -207,7 +207,7 @@ export const EVPickCard: React.FC<EVPickCardProps> = ({
               </div>
               <div
                 style={{
-                  fontSize: 20,
+                  fontSize: 16,
                   color: COLORS.textTertiary,
                   fontFamily: "Open Sans, sans-serif",
                 }}
@@ -220,9 +220,9 @@ export const EVPickCard: React.FC<EVPickCardProps> = ({
                 style={{
                   backgroundColor: COLORS.bgEvBadge,
                   color: COLORS.textPositive,
-                  padding: "8px 16px",
+                  padding: "6px 12px",
                   borderRadius: 8,
-                  fontSize: 20,
+                  fontSize: 16,
                   fontWeight: 500,
                   fontFamily: "Montserrat, sans-serif",
                 }}
@@ -233,9 +233,9 @@ export const EVPickCard: React.FC<EVPickCardProps> = ({
                 style={{
                   backgroundColor: getRatingColor(mainRating),
                   color: COLORS.textPrimary,
-                  padding: "8px 16px",
+                  padding: "6px 12px",
                   borderRadius: 8,
-                  fontSize: 20,
+                  fontSize: 16,
                   fontWeight: 700,
                   fontFamily: "Montserrat, sans-serif",
                 }}
@@ -264,7 +264,7 @@ export const EVPickCard: React.FC<EVPickCardProps> = ({
                 backgroundColor: i === 0 ? COLORS.bgTab : "transparent",
                 color: i === 0 ? COLORS.textPrimary : COLORS.textTertiary,
                 fontWeight: i === 0 ? 500 : 400,
-                fontSize: 20,
+                fontSize: 16,
                 fontFamily: "Open Sans, sans-serif",
               }}
             >
@@ -276,7 +276,7 @@ export const EVPickCard: React.FC<EVPickCardProps> = ({
         {/* Table Content with scroll animation */}
         <div
           style={{
-            padding: 32,
+            padding: 20,
             transform: `translateY(${scrollY}px)`,
           }}
         >
@@ -284,10 +284,10 @@ export const EVPickCard: React.FC<EVPickCardProps> = ({
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "1.2fr 1fr 0.8fr 1fr 0.8fr 0.8fr 1fr",
-              gap: 16,
-              marginBottom: 16,
-              padding: "0 16px",
+              gridTemplateColumns: "1.1fr 1.1fr 0.7fr 0.8fr 0.7fr 0.6fr 0.8fr",
+              gap: 10,
+              marginBottom: 12,
+              padding: "0 8px",
               opacity: interpolate(frame, [35, 50], [0, 1], {
                 extrapolateRight: "clamp",
               }),
@@ -344,8 +344,8 @@ export const EVPickCard: React.FC<EVPickCardProps> = ({
                 key={index}
                 style={{
                   display: "grid",
-                  gridTemplateColumns: "1.2fr 1fr 0.8fr 1fr 0.8fr 0.8fr 1fr",
-                  gap: 16,
+                  gridTemplateColumns: "1.1fr 1.1fr 0.7fr 0.8fr 0.7fr 0.6fr 0.8fr",
+                  gap: 10,
                   alignItems: "center",
                   backgroundColor: COLORS.bgRow,
                   borderRadius: 10,
@@ -364,7 +364,7 @@ export const EVPickCard: React.FC<EVPickCardProps> = ({
                 <div
                   style={{
                     color: COLORS.textPrimary,
-                    fontSize: 20,
+                    fontSize: 15,
                     fontFamily: "Open Sans, sans-serif",
                   }}
                 >
@@ -373,7 +373,7 @@ export const EVPickCard: React.FC<EVPickCardProps> = ({
                 <div
                   style={{
                     color: COLORS.textSecondary,
-                    fontSize: 20,
+                    fontSize: 14,
                     fontFamily: "Open Sans, sans-serif",
                   }}
                 >
@@ -382,7 +382,7 @@ export const EVPickCard: React.FC<EVPickCardProps> = ({
                 <div
                   style={{
                     color: COLORS.textPrimary,
-                    fontSize: 20,
+                    fontSize: 16,
                     fontWeight: 500,
                     fontFamily: "Montserrat, sans-serif",
                   }}
@@ -392,7 +392,7 @@ export const EVPickCard: React.FC<EVPickCardProps> = ({
                 <div
                   style={{
                     color: COLORS.textPositive,
-                    fontSize: 20,
+                    fontSize: 15,
                     fontWeight: 500,
                     fontFamily: "Montserrat, sans-serif",
                     textAlign: "center",
@@ -403,7 +403,7 @@ export const EVPickCard: React.FC<EVPickCardProps> = ({
                 <div
                   style={{
                     color: COLORS.textPositive,
-                    fontSize: 20,
+                    fontSize: 16,
                     fontWeight: 700,
                     fontFamily: "Montserrat, sans-serif",
                     textAlign: "center",
@@ -416,9 +416,9 @@ export const EVPickCard: React.FC<EVPickCardProps> = ({
                     style={{
                       backgroundColor: getRatingColor(market.rating),
                       color: COLORS.textPrimary,
-                      padding: "6px 14px",
+                      padding: "4px 10px",
                       borderRadius: 6,
-                      fontSize: 16,
+                      fontSize: 14,
                       fontWeight: 700,
                       fontFamily: "Montserrat, sans-serif",
                     }}
@@ -431,9 +431,9 @@ export const EVPickCard: React.FC<EVPickCardProps> = ({
                     style={{
                       backgroundColor: COLORS.buttonGreen,
                       color: COLORS.textPrimary,
-                      padding: "10px 16px",
+                      padding: "8px 10px",
                       borderRadius: 8,
-                      fontSize: 18,
+                      fontSize: 14,
                       fontFamily: "Open Sans, sans-serif",
                       textAlign: "center",
                     }}

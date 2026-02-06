@@ -305,7 +305,7 @@ export const ParlayValidator: React.FC<ParlayValidatorProps> = ({
     <div
       style={{
         width: "100%",
-        maxWidth: 800,
+        maxWidth: 1020,
         opacity: containerOpacity,
       }}
     >

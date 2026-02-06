@@ -137,18 +137,18 @@ export const DashboardStats: React.FC<DashboardStatsProps> = ({
     <div
       style={{
         width: "100%",
-        maxWidth: 900,
+        maxWidth: 1020,
         opacity: containerOpacity,
       }}
     >
       {/* Title */}
       <h2
         style={{
-          fontSize: 36,
+          fontSize: 28,
           fontWeight: 700,
           color: COLORS.textPrimary,
           fontFamily: "Montserrat, sans-serif",
-          marginBottom: 32,
+          marginBottom: 24,
           textAlign: "center",
           opacity: titleOpacity,
           transform: `translateY(${titleY}px) scale(${titleScale})`,

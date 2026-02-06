@@ -505,7 +505,7 @@ export const CommunityShowcase: React.FC<CommunityShowcaseProps> = ({
     <div
       style={{
         width: "100%",
-        maxWidth: 700,
+        maxWidth: 1020,
         display: "flex",
         flexDirection: "column",
         gap: 20,

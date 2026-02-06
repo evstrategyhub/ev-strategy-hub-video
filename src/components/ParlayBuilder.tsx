@@ -303,7 +303,7 @@ export const ParlayBuilder: React.FC<ParlayBuilderProps> = ({
     <div
       style={{
         width: "100%",
-        maxWidth: 900,
+        maxWidth: 1020,
         display: "flex",
         flexDirection: "column",
         gap: 20,

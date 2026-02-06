@@ -274,7 +274,7 @@ export const StrategyBuilder: React.FC<StrategyBuilderProps> = ({
     extrapolateLeft: "clamp",
   });
 
-  const panelX = interpolate(frame, [panelDelay, panelDelay + 30], [50, 0], {
+  const panelY = interpolate(frame, [panelDelay, panelDelay + 30], [40, 0], {
     extrapolateRight: "clamp",
     extrapolateLeft: "clamp",
   });
@@ -327,14 +327,14 @@ export const StrategyBuilder: React.FC<StrategyBuilderProps> = ({
     <div
       style={{
         width: "100%",
-        maxWidth: 900,
+        maxWidth: 1020,
         opacity: containerOpacity,
       }}
     >
       {/* Title */}
       <h2
         style={{
-          fontSize: 32,
+          fontSize: 28,
           fontWeight: 700,
           color: COLORS.textPrimary,
           fontFamily: "Montserrat, sans-serif",
@@ -345,15 +345,15 @@ export const StrategyBuilder: React.FC<StrategyBuilderProps> = ({
         Construye tu Estrategia
       </h2>
 
-      {/* Two column layout */}
+      {/* Single column layout (vertical) */}
       <div
         style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: 24,
+          display: "flex",
+          flexDirection: "column",
+          gap: 20,
         }}
       >
-        {/* Left column - Picks */}
+        {/* Picks section */}
         <div
           style={{
             backgroundColor: COLORS.bgCard,
@@ -386,7 +386,7 @@ export const StrategyBuilder: React.FC<StrategyBuilderProps> = ({
           </div>
         </div>
 
-        {/* Right column - Strategy */}
+        {/* Strategy panel */}
         <div
           style={{
             backgroundColor: COLORS.bgCard,
@@ -394,7 +394,7 @@ export const StrategyBuilder: React.FC<StrategyBuilderProps> = ({
             border: `1px solid ${COLORS.borderDefault}`,
             padding: 24,
             opacity: panelOpacity,
-            transform: `translateX(${panelX}px) scale(${panelScale})`,
+            transform: `translateY(${panelY}px) scale(${panelScale})`,
           }}
         >
           <h3
