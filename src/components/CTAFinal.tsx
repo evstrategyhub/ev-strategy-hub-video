@@ -159,7 +159,7 @@ export const CTAFinal: React.FC<CTAFinalProps> = ({
           fontSize: 64,
           fontWeight: 'bold',
           color: COLORS.textPrimary,
-          fontFamily: 'Montserrat, sans-serif',
+          fontFamily: 'Poppins, sans-serif',
           textAlign: 'center',
           marginBottom: 20,
           opacity: titleOpacity,
@@ -174,7 +174,7 @@ export const CTAFinal: React.FC<CTAFinalProps> = ({
         style={{
           fontSize: 28,
           color: COLORS.textSecondary,
-          fontFamily: 'Open Sans, sans-serif',
+          fontFamily: 'Montserrat, sans-serif',
           textAlign: 'center',
           maxWidth: 800,
           marginBottom: 60,
@@ -216,7 +216,7 @@ export const CTAFinal: React.FC<CTAFinalProps> = ({
             borderRadius: 50,
             fontSize: 32,
             fontWeight: 'bold',
-            fontFamily: 'Montserrat, sans-serif',
+            fontFamily: 'Poppins, sans-serif',
             boxShadow: '0 10px 40px rgba(0, 0, 0, 0.3)',
             display: 'flex',
             alignItems: 'center',
@@ -234,7 +234,7 @@ export const CTAFinal: React.FC<CTAFinalProps> = ({
           marginTop: 40,
           fontSize: 24,
           color: COLORS.textSecondary,
-          fontFamily: 'Open Sans, sans-serif',
+          fontFamily: 'Montserrat, sans-serif',
           opacity: interpolate(frame, [70, 90], [0, 1], { extrapolateRight: 'clamp' }),
         }}
       >

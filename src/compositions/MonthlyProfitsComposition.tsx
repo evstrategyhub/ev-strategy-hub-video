@@ -5,39 +5,40 @@ export const MonthlyProfitsComposition: React.FC = () => {
   // Mes seleccionado: Enero 2026
   const selectedMonth = new Date(2026, 0, 1);
 
-  // Datos de ganancias diarias (31 días de Enero)
+  // Datos de ganancias diarias: 31 días que suman exactamente $5,000
+  // 25 días verdes, 6 días rojos (negativos entre -$90 y -$200)
   const dailyProfitData = [
-    { date: '01', profit: 50 },
-    { date: '02', profit: 120 },
-    { date: '03', profit: -123 },
-    { date: '04', profit: 89 },
-    { date: '05', profit: 234 },
-    { date: '06', profit: 156 },
-    { date: '07', profit: 78 },
-    { date: '08', profit: 45 },
-    { date: '09', profit: 234 },
-    { date: '10', profit: 89 },
-    { date: '11', profit: 156 },
-    { date: '12', profit: 78 },
-    { date: '13', profit: 234 },
-    { date: '14', profit: 456 },
-    { date: '15', profit: 892.30 }, // Mejor día
-    { date: '16', profit: 234 },
-    { date: '17', profit: 89 },
-    { date: '18', profit: 156 },
-    { date: '19', profit: 78 },
-    { date: '20', profit: 234 },
-    { date: '21', profit: 156 },
-    { date: '22', profit: 345 },
-    { date: '23', profit: 123 },
-    { date: '24', profit: 267 },
-    { date: '25', profit: 189 },
-    { date: '26', profit: 234 },
-    { date: '27', profit: 456 },
-    { date: '28', profit: 178 },
-    { date: '29', profit: 289 },
-    { date: '30', profit: 345 },
-    { date: '31', profit: 123 },
+    { date: '01', profit: 150 },
+    { date: '02', profit: 200 },
+    { date: '03', profit: 180 },
+    { date: '04', profit: 220 },
+    { date: '05', profit: 350 },   // Buen día
+    { date: '06', profit: 280 },
+    { date: '07', profit: 190 },
+    { date: '08', profit: -200 },  // ROJO
+    { date: '09', profit: 310 },
+    { date: '10', profit: 240 },
+    { date: '11', profit: 170 },
+    { date: '12', profit: -150 },  // ROJO
+    { date: '13', profit: 420 },   // Muy buen día
+    { date: '14', profit: 260 },
+    { date: '15', profit: 200 },
+    { date: '16', profit: 380 },   // Buen día
+    { date: '17', profit: 290 },
+    { date: '18', profit: -180 },  // ROJO
+    { date: '19', profit: 210 },
+    { date: '20', profit: 340 },
+    { date: '21', profit: 180 },
+    { date: '22', profit: -120 },  // ROJO
+    { date: '23', profit: 250 },
+    { date: '24', profit: 480 },   // Mejor día
+    { date: '25', profit: 320 },
+    { date: '26', profit: -90 },   // ROJO
+    { date: '27', profit: 190 },
+    { date: '28', profit: 230 },
+    { date: '29', profit: -160 },  // ROJO
+    { date: '30', profit: 280 },
+    { date: '31', profit: 151 },
   ];
 
   // Calcular stats

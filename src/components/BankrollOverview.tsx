@@ -26,25 +26,37 @@ export const BankrollOverview: React.FC<BankrollOverviewProps> = ({
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // Animación de entrada (primeros 0.5s)
-  const fadeIn = interpolate(frame, [0, fps * 0.5], [0, 1], {
+  // Animación de entrada (primeros 0.5s = 15 frames a 30fps)
+  const fadeIn = interpolate(frame, [0, 15], [0, 1], {
     extrapolateRight: 'clamp',
     easing: Easing.out(Easing.ease),
   });
 
-  const slideUp = interpolate(frame, [0, fps * 0.5], [50, 0], {
+  const slideUp = interpolate(frame, [0, 15], [50, 0], {
     extrapolateRight: 'clamp',
     easing: Easing.out(Easing.ease),
   });
 
-  // Animación de la gráfica (dibuja la línea progresivamente)
+  // Animación de la gráfica (dibuja la línea progresivamente) - sincronizado frame 15-60 (75 frames total)
   const graphProgress = interpolate(
     frame,
-    [fps * 0.5, fps * 2],
+    [15, 60],
     [0, 100],
     {
       extrapolateRight: 'clamp',
+      extrapolateLeft: 'clamp',
       easing: Easing.inOut(Easing.ease),
+    }
+  );
+
+  // Animación del bankroll (frame 15-60)
+  const animatedBankroll = interpolate(
+    frame,
+    [15, 60],
+    [0, bankrollData.currentBankroll],
+    {
+      extrapolateRight: 'clamp',
+      extrapolateLeft: 'clamp',
     }
   );
 
@@ -107,20 +119,20 @@ export const BankrollOverview: React.FC<BankrollOverviewProps> = ({
             color: '#ffffff',
             fontSize: '28px',
             fontWeight: 'bold',
-            fontFamily: 'Montserrat, sans-serif',
+            fontFamily: 'Poppins, sans-serif',
           }}
         >
           Bankroll Actual
         </h2>
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-          <span
-            style={{
-              color: '#ffffff',
-              fontWeight: 'bold',
-              display: 'flex',
-              alignItems: 'center',
-              fontFamily: 'Open Sans, sans-serif',
-            }}
+            <span
+              style={{
+                color: '#ffffff',
+                fontWeight: 'bold',
+                display: 'flex',
+                alignItems: 'center',
+                fontFamily: 'Montserrat, sans-serif',
+              }}
           >
             <span style={{ color: '#22c55e', marginRight: '8px', fontSize: '24px' }}>📈</span>
             Evolución
@@ -137,17 +149,17 @@ export const BankrollOverview: React.FC<BankrollOverviewProps> = ({
           padding: '32px',
         }}
       >
-        {/* Bankroll Amount */}
-        <div
-          style={{
-            fontSize: '72px',
-            fontWeight: 'bold',
-            color: bankrollData.currentBankroll >= 0 ? '#22c55e' : '#ef4444',
-            fontFamily: 'Montserrat, sans-serif',
-            marginBottom: '24px',
-          }}
+        {/* Bankroll Amount - Animado */}
+          <div
+            style={{
+              fontSize: '72px',
+              fontWeight: 'bold',
+              color: '#22c55e',
+              fontFamily: 'Poppins, sans-serif',
+              marginBottom: '24px',
+            }}
         >
-          ${formatNumber(Math.abs(bankrollData.currentBankroll))}
+          ${formatNumber(animatedBankroll)}
         </div>
 
         {/* Graph */}
@@ -178,7 +190,7 @@ export const BankrollOverview: React.FC<BankrollOverviewProps> = ({
                 height: '100%',
                 color: '#9ca3af',
                 fontSize: '18px',
-                fontFamily: 'Open Sans, sans-serif',
+                fontFamily: 'Montserrat, sans-serif',
               }}
             >
               No hay datos disponibles
@@ -203,23 +215,23 @@ export const BankrollOverview: React.FC<BankrollOverviewProps> = ({
               borderRadius: '8px',
             }}
           >
-            <div
-              style={{
-                color: '#9ca3af',
-                fontSize: '16px',
-                marginBottom: '8px',
-                fontFamily: 'Open Sans, sans-serif',
-              }}
+              <div
+                style={{
+                  color: '#9ca3af',
+                  fontSize: '16px',
+                  marginBottom: '8px',
+                  fontFamily: 'Montserrat, sans-serif',
+                }}
             >
               Depósitos
             </div>
-            <div
-              style={{
-                color: '#ffffff',
-                fontSize: '28px',
-                fontWeight: 'bold',
-                fontFamily: 'Montserrat, sans-serif',
-              }}
+                <div
+                  style={{
+                    color: '#ffffff',
+                    fontSize: '28px',
+                    fontWeight: 'bold',
+                    fontFamily: 'Poppins, sans-serif',
+                  }}
             >
               ${formatNumber(bankrollData.deposits)}
             </div>
@@ -233,23 +245,23 @@ export const BankrollOverview: React.FC<BankrollOverviewProps> = ({
               borderRadius: '8px',
             }}
           >
-            <div
-              style={{
-                color: '#9ca3af',
-                fontSize: '16px',
-                marginBottom: '8px',
-                fontFamily: 'Open Sans, sans-serif',
-              }}
+              <div
+                style={{
+                  color: '#9ca3af',
+                  fontSize: '16px',
+                  marginBottom: '8px',
+                  fontFamily: 'Montserrat, sans-serif',
+                }}
             >
               Retiros
             </div>
-            <div
-              style={{
-                color: '#ffffff',
-                fontSize: '28px',
-                fontWeight: 'bold',
-                fontFamily: 'Montserrat, sans-serif',
-              }}
+                <div
+                  style={{
+                    color: '#ffffff',
+                    fontSize: '28px',
+                    fontWeight: 'bold',
+                    fontFamily: 'Poppins, sans-serif',
+                  }}
             >
               ${formatNumber(bankrollData.withdrawals)}
             </div>
@@ -263,32 +275,32 @@ export const BankrollOverview: React.FC<BankrollOverviewProps> = ({
               borderRadius: '8px',
             }}
           >
-            <div
-              style={{
-                color: '#9ca3af',
-                fontSize: '16px',
-                marginBottom: '8px',
-                fontFamily: 'Open Sans, sans-serif',
-              }}
+              <div
+                style={{
+                  color: '#9ca3af',
+                  fontSize: '16px',
+                  marginBottom: '8px',
+                  fontFamily: 'Montserrat, sans-serif',
+                }}
             >
               Profit
             </div>
-            <div
-              style={{
-                color: bankrollData.totalProfit >= 0 ? '#22c55e' : '#ef4444',
-                fontSize: '28px',
-                fontWeight: 'bold',
-                fontFamily: 'Montserrat, sans-serif',
-              }}
+                <div
+                  style={{
+                    color: bankrollData.totalProfit >= 0 ? '#22c55e' : '#ef4444',
+                    fontSize: '28px',
+                    fontWeight: 'bold',
+                    fontFamily: 'Poppins, sans-serif',
+                  }}
             >
               ${formatNumber(Math.abs(bankrollData.totalProfit))}
             </div>
-            <div
-              style={{
-                color: bankrollData.roi >= 0 ? '#22c55e' : '#ef4444',
-                fontSize: '14px',
-                fontFamily: 'Open Sans, sans-serif',
-              }}
+                <div
+                  style={{
+                    color: bankrollData.roi >= 0 ? '#22c55e' : '#ef4444',
+                    fontSize: '14px',
+                    fontFamily: 'Montserrat, sans-serif',
+                  }}
             >
               {formatNumber(Math.abs(bankrollData.roi))}% ROI
             </div>
@@ -297,22 +309,22 @@ export const BankrollOverview: React.FC<BankrollOverviewProps> = ({
 
         {/* Button */}
         <button
-          style={{
-            marginTop: '16px',
-            backgroundColor: '#16a34a',
-            color: '#ffffff',
-            borderRadius: '8px',
-            padding: '16px',
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            border: 'none',
-            fontSize: '20px',
-            fontWeight: 'bold',
-            fontFamily: 'Open Sans, sans-serif',
-            cursor: 'pointer',
-          }}
+            style={{
+              marginTop: '16px',
+              backgroundColor: '#16a34a',
+              color: '#ffffff',
+              borderRadius: '8px',
+              padding: '16px',
+              width: '100%',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              border: 'none',
+              fontSize: '20px',
+              fontWeight: 'bold',
+              fontFamily: 'Montserrat, sans-serif',
+              cursor: 'pointer',
+            }}
         >
           <span style={{ marginRight: '8px' }}>+</span> Operación
         </button>
