@@ -1,5 +1,5 @@
 import React from 'react';
-import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, Easing } from 'remotion';
+import { useCurrentFrame, useVideoConfig, interpolate, Easing } from 'remotion';
 
 interface Market {
   bookmaker: string;
@@ -12,11 +12,11 @@ interface Market {
 }
 
 interface MatchCardProps {
-  team1: string;
-  team2: string;
-  league: string;
-  time: string;
-  markets: Market[];
+  team1?: string;
+  team2?: string;
+  league?: string;
+  time?: string;
+  markets?: Market[];
 }
 
 const COLORS = {
@@ -105,9 +105,8 @@ export const MatchCard: React.FC<MatchCardProps> = ({
   };
 
   return (
-    <AbsoluteFill
+    <div
       style={{
-        backgroundColor: '#111827',
         padding: '40px',
         opacity: fadeIn,
         transform: `translateY(${slideUp}px)`,
@@ -303,6 +302,6 @@ export const MatchCard: React.FC<MatchCardProps> = ({
           </div>
         ))}
       </div>
-    </AbsoluteFill>
+    </div>
   );
 };

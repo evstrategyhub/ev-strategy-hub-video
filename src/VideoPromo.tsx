@@ -3,6 +3,8 @@ import { AbsoluteFill, Sequence, useCurrentFrame, interpolate, Easing, Img, stat
 import { BankrollOverview } from './components/BankrollOverview';
 import { MonthlyProfits } from './components/MonthlyProfits';
 import { CTAFinal } from './components/CTAFinal';
+import { MatchCard } from './components/MatchCard';
+import { MatchCardNBA } from './components/MatchCardNBA';
 
 export const VideoPromo: React.FC = () => {
   const bankrollData = {
@@ -119,14 +121,195 @@ export const VideoPromo: React.FC = () => {
         </AbsoluteFill>
       </Sequence>
 
+      {/* ESCENA 2 - BEAT 1: MatchCard centrado (frames 75-195) */}
+      <Sequence from={75} durationInFrames={120}>
+        <Scene2Beat1 />
+      </Sequence>
+
+      {/* ESCENA 2 - BEAT 2: MatchCard + MatchCardNBA split (frames 195-315) */}
+      <Sequence from={195} durationInFrames={120}>
+        <Scene2Beat2 />
+      </Sequence>
+
+      {/* ESCENA 2 - BEAT 3: MatchCardNBA centrado (frames 315-435) */}
+      <Sequence from={315} durationInFrames={120}>
+        <Scene2Beat3 />
+      </Sequence>
+
       {/* ESCENA FINAL: CTA */}
-      <Sequence from={780} durationInFrames={120}>
+      <Sequence from={420} durationInFrames={120}>
         <CTAFinal />
       </Sequence>
     </AbsoluteFill>
   );
 };
 
+// ============================================================================
+// ESCENA 2 - BEAT 1: MatchCard centrado
+// ============================================================================
+const Scene2Beat1: React.FC = () => {
+  const frame = useCurrentFrame();
+
+  // Fade in: frames 0-20, Hold: 20-100, Fade out: 100-120
+  const opacity = interpolate(
+    frame,
+    [0, 20, 100, 120],
+    [0, 1, 1, 0],
+    { extrapolateRight: 'clamp', extrapolateLeft: 'clamp' }
+  );
+
+  return (
+    <AbsoluteFill style={{ backgroundColor: '#111827', opacity }}>
+      {/* Texto arriba */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 60,
+          left: 0,
+          width: '100%',
+          textAlign: 'center',
+          padding: '0 80px',
+        }}
+      >
+        <p
+          style={{
+            fontSize: 48,
+            fontWeight: 'bold',
+            color: '#ffffff',
+            textShadow: '0 4px 12px rgba(0,0,0,0.8)',
+            fontFamily: 'Montserrat, sans-serif',
+            margin: 0,
+            lineHeight: 1.3,
+          }}
+        >
+          Convertimos los momios en probabilidades y usamos nuestros modelos
+        </p>
+      </div>
+
+      {/* MatchCard centrado - usando misma estructura que Escena 1 */}
+      <div style={{ position: 'absolute', top: 180, left: 0, width: '100%' }}>
+        <div style={{ transform: 'scale(0.85)', transformOrigin: 'top center' }}>
+          <MatchCard />
+        </div>
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+// ============================================================================
+// ESCENA 2 - BEAT 2: MatchCard + MatchCardNBA lado a lado
+// ============================================================================
+const Scene2Beat2: React.FC = () => {
+  const frame = useCurrentFrame();
+
+  // Fade in: frames 0-20, Hold: 20-100, Fade out: 100-120
+  const opacity = interpolate(
+    frame,
+    [0, 20, 100, 120],
+    [0, 1, 1, 0],
+    { extrapolateRight: 'clamp', extrapolateLeft: 'clamp' }
+  );
+
+  return (
+    <AbsoluteFill style={{ backgroundColor: '#111827', opacity }}>
+      {/* Texto arriba */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 60,
+          left: 0,
+          width: '100%',
+          textAlign: 'center',
+          padding: '0 80px',
+        }}
+      >
+        <p
+          style={{
+            fontSize: 48,
+            fontWeight: 'bold',
+            color: '#ffffff',
+            textShadow: '0 4px 12px rgba(0,0,0,0.8)',
+            fontFamily: 'Montserrat, sans-serif',
+            margin: 0,
+            lineHeight: 1.3,
+          }}
+        >
+          Para darte la probabilidad de todos los mercados de fútbol
+        </p>
+      </div>
+
+      {/* MatchCard izquierda (50%) */}
+      <div style={{ position: 'absolute', top: 180, left: '-25%', width: '100%' }}>
+        <div style={{ transform: 'scale(0.7)', transformOrigin: 'top center' }}>
+          <MatchCard />
+        </div>
+      </div>
+
+      {/* MatchCardNBA derecha (50%) */}
+      <div style={{ position: 'absolute', top: 180, left: '25%', width: '100%' }}>
+        <div style={{ transform: 'scale(0.7)', transformOrigin: 'top center' }}>
+          <MatchCardNBA />
+        </div>
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+// ============================================================================
+// ESCENA 2 - BEAT 3: MatchCardNBA centrado
+// ============================================================================
+const Scene2Beat3: React.FC = () => {
+  const frame = useCurrentFrame();
+
+  // Fade in: frames 0-20, Hold: 20-100, Fade out: 100-120
+  const opacity = interpolate(
+    frame,
+    [0, 20, 100, 120],
+    [0, 1, 1, 0],
+    { extrapolateRight: 'clamp', extrapolateLeft: 'clamp' }
+  );
+
+  return (
+    <AbsoluteFill style={{ backgroundColor: '#111827', opacity }}>
+      {/* Texto arriba */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 60,
+          left: 0,
+          width: '100%',
+          textAlign: 'center',
+          padding: '0 80px',
+        }}
+      >
+        <p
+          style={{
+            fontSize: 44,
+            fontWeight: 'bold',
+            color: '#ffffff',
+            textShadow: '0 4px 12px rgba(0,0,0,0.8)',
+            fontFamily: 'Montserrat, sans-serif',
+            margin: 0,
+            lineHeight: 1.3,
+          }}
+        >
+          Además de análisis de mercados y proyecciones player props en NBA, NFL y MLB
+        </p>
+      </div>
+
+      {/* MatchCardNBA centrado */}
+      <div style={{ position: 'absolute', top: 200, left: 0, width: '100%' }}>
+        <div style={{ transform: 'scale(0.85)', transformOrigin: 'top center' }}>
+          <MatchCardNBA />
+        </div>
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+// ============================================================================
+// ESCENA 1 - Componentes existentes
+// ============================================================================
 const AnimatedText: React.FC = () => {
   const frame = useCurrentFrame();
 
@@ -212,7 +395,7 @@ const LogoAnimated: React.FC = () => {
     <Img
       src={staticFile('images/logo.png')}
       style={{
-        width: 280,
+        width: 400,
         height: 'auto',
         opacity,
         transform: `scale(${scale})`,
