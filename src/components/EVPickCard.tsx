@@ -1,451 +1,426 @@
-import React from "react";
-import {
-  interpolate,
-  useCurrentFrame,
-  spring,
-  useVideoConfig,
-} from "remotion";
-
-// Design system colors
-const COLORS = {
-  bgCard: "#1f2937",
-  bgHeader: "#111827",
-  bgRow: "rgba(55, 65, 81, 0.5)",
-  bgTab: "#374151",
-  bgEvBadge: "rgba(20, 83, 45, 0.3)",
-  borderDefault: "#374151",
-  textPrimary: "#ffffff",
-  textSecondary: "#d1d5db",
-  textTertiary: "#9ca3af",
-  textPositive: "#4ade80",
-  ratingA: "#22c55e",
-  ratingB: "#22c55e",
-  ratingC: "#86efac",
-  ratingD: "#facc15",
-  ratingF: "#ef4444",
-  buttonGreen: "#16a34a",
-};
-
-const getRatingColor = (rating: string): string => {
-  const colors: Record<string, string> = {
-    A: COLORS.ratingA,
-    B: COLORS.ratingB,
-    C: COLORS.ratingC,
-    D: COLORS.ratingD,
-    F: COLORS.ratingF,
-  };
-  return colors[rating] || COLORS.ratingC;
-};
-
-interface MarketRow {
-  bookmaker: string;
-  market: string;
-  odds: string;
-  probIA: string;
-  ev: string;
-  rating: string;
-}
+import React from 'react';
+import { AbsoluteFill, useCurrentFrame, useVideoConfig, interpolate, Easing } from 'remotion';
 
 interface EVPickCardProps {
   homeTeam?: string;
   awayTeam?: string;
   league?: string;
   date?: string;
-  mainEV?: string;
-  mainRating?: string;
-  markets?: MarketRow[];
+  time?: string;
+  market?: string;
+  selection?: string;
+  odds?: string;
+  probIA?: string;
+  ev?: string;
+  rating?: string;
 }
 
+const COLORS = {
+  bgCard: '#1f2937',
+  bgHeader: '#374151',
+  bgHeaderGradient: 'linear-gradient(90deg, #374151, #4b5563)',
+  borderCard: '#4b5563',
+  borderSection: '#4b5563',
+  textPrimary: '#ffffff',
+  textSecondary: '#d1d5db',
+  textTertiary: '#9ca3af',
+  textPositive: '#4ade80',
+  bgEvBadge: '#16a34a',
+  bgRatingBadge: '#1f2937',
+  buttonGreen: '#16a34a',
+};
+
+const getRatingColor = (rating: string): string => {
+  const colors: Record<string, string> = {
+    A: '#22c55e',
+    B: '#22c55e',
+    C: '#86efac',
+  };
+  return colors[rating] || '#86efac';
+};
+
 export const EVPickCard: React.FC<EVPickCardProps> = ({
-  homeTeam = "América",
-  awayTeam = "Guadalajara",
-  league = "Liga MX",
-  date = "09 Feb 2026",
-  mainEV = "+9.2%",
-  mainRating = "B",
-  markets = [
-    {
-      bookmaker: "Caliente",
-      market: "Ganador",
-      odds: "1.91",
-      probIA: "54.2%",
-      ev: "+8.3%",
-      rating: "B",
-    },
-    {
-      bookmaker: "Betway",
-      market: "Ambos Anotan",
-      odds: "2.45",
-      probIA: "52.8%",
-      ev: "+5.7%",
-      rating: "C",
-    },
-    {
-      bookmaker: "bet365",
-      market: "Total Goles +2.5",
-      odds: "1.95",
-      probIA: "58.1%",
-      ev: "+12.4%",
-      rating: "A",
-    },
-  ],
+  homeTeam = 'América',
+  awayTeam = 'Guadalajara',
+  league = 'Liga MX',
+  date = 'Vie, 7 Feb',
+  time = '19:00',
+  market = 'Ganador',
+  selection = 'Local',
+  odds = '1.91',
+  probIA = '54.2%',
+  ev = '+8.3%',
+  rating = 'B',
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const totalEvPicks = 23;
-
-  const scrollY = interpolate(frame, [60, 150], [0, -60], {
-    extrapolateRight: "clamp",
-    extrapolateLeft: "clamp",
+  // Card entrance animation
+  const cardOpacity = interpolate(frame, [0, fps * 0.4], [0, 1], {
+    extrapolateRight: 'clamp',
+    easing: Easing.out(Easing.ease),
   });
 
-  const isHighEV = (ev: string) => {
-    const value = parseFloat(ev.replace("+", "").replace("%", ""));
-    return value > 8;
-  };
-
-  const cardOpacity = interpolate(frame, [0, 20], [0, 1], {
-    extrapolateRight: "clamp",
-  });
-  const cardScale = spring({
-    frame,
-    fps,
-    from: 0.9,
-    to: 1,
-    config: { damping: 15, stiffness: 100 },
+  const cardScale = interpolate(frame, [0, fps * 0.4], [0.95, 1], {
+    extrapolateRight: 'clamp',
+    easing: Easing.out(Easing.ease),
   });
 
-  const headerOpacity = interpolate(frame, [10, 30], [0, 1], {
-    extrapolateRight: "clamp",
+  // Header animation
+  const headerOpacity = interpolate(frame, [fps * 0.2, fps * 0.5], [0, 1], {
+    extrapolateRight: 'clamp',
   });
 
-  const tabsOpacity = interpolate(frame, [25, 40], [0, 1], {
-    extrapolateRight: "clamp",
+  // Badges animation
+  const badgeOpacity = interpolate(frame, [fps * 0.4, fps * 0.7], [0, 1], {
+    extrapolateRight: 'clamp',
   });
 
-  const badgeOpacity = interpolate(frame, [20, 35], [0, 1], {
-    extrapolateRight: "clamp",
+  const badgeScale = interpolate(frame, [fps * 0.4, fps * 0.7], [0.8, 1], {
+    extrapolateRight: 'clamp',
+    easing: Easing.out(Easing.ease),
   });
 
-  const badgeScale = spring({
-    frame: frame - 20,
-    fps,
-    from: 0.5,
-    to: 1,
-    config: { damping: 10, stiffness: 150 },
+  // Content sections animation
+  const contentOpacity = interpolate(frame, [fps * 0.6, fps * 1], [0, 1], {
+    extrapolateRight: 'clamp',
+  });
+
+  const contentTranslate = interpolate(frame, [fps * 0.6, fps * 1], [20, 0], {
+    extrapolateRight: 'clamp',
+    easing: Easing.out(Easing.ease),
+  });
+
+  // Button animation
+  const buttonOpacity = interpolate(frame, [fps * 1.2, fps * 1.5], [0, 1], {
+    extrapolateRight: 'clamp',
+  });
+
+  const buttonScale = interpolate(frame, [fps * 1.2, fps * 1.5], [0.9, 1], {
+    extrapolateRight: 'clamp',
+    easing: Easing.out(Easing.ease),
   });
 
   return (
-    <div
+    <AbsoluteFill
       style={{
-        width: "100%",
-        maxWidth: 1020,
-        opacity: cardOpacity,
-        transform: `scale(${cardScale})`,
-        position: "relative",
+        backgroundColor: '#111827',
+        padding: '60px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
       }}
     >
-      {/* Floating Badge - Top Right */}
+      {/* Card Container */}
       <div
         style={{
-          position: "absolute",
-          top: -12,
-          right: 20,
-          backgroundColor: COLORS.ratingA,
-          color: COLORS.textPrimary,
-          padding: "10px 20px",
-          borderRadius: 24,
-          fontSize: 16,
-          fontWeight: 700,
-          fontFamily: "Montserrat, sans-serif",
-          boxShadow: "0 4px 12px rgba(34, 197, 94, 0.4)",
-          opacity: badgeOpacity,
-          transform: `scale(${badgeScale})`,
-          zIndex: 10,
-        }}
-      >
-        {totalEvPicks} picks EV+ hoy
-      </div>
-
-      {/* Main Card Container */}
-      <div
-        style={{
+          width: '100%',
+          maxWidth: '900px',
           backgroundColor: COLORS.bgCard,
-          borderRadius: 12,
-          border: `1px solid ${COLORS.borderDefault}`,
-          overflow: "hidden",
+          borderRadius: '12px',
+          border: `1px solid ${COLORS.borderCard}`,
+          overflow: 'hidden',
+          opacity: cardOpacity,
+          transform: `scale(${cardScale})`,
         }}
       >
-        {/* Header */}
+        {/* Header con gradiente */}
         <div
           style={{
-            backgroundColor: COLORS.bgHeader,
-            padding: "16px 24px",
-            borderBottom: `1px solid ${COLORS.borderDefault}`,
+            background: COLORS.bgHeaderGradient,
+            padding: '24px 32px',
+            borderBottom: `1px solid ${COLORS.borderSection}`,
             opacity: headerOpacity,
           }}
         >
+          {/* Línea 1: Icono + Equipos */}
           <div
             style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px',
+              marginBottom: '8px',
             }}
           >
-            <div>
-              <div
-                style={{
-                  color: COLORS.textPrimary,
-                  fontWeight: 600,
-                  fontSize: 24,
-                  fontFamily: "Montserrat, sans-serif",
-                  marginBottom: 4,
-                }}
-              >
-                {homeTeam} vs {awayTeam}
-              </div>
-              <div
-                style={{
-                  fontSize: 16,
-                  color: COLORS.textTertiary,
-                  fontFamily: "Open Sans, sans-serif",
-                }}
-              >
-                {league} • {date}
-              </div>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <div
-                style={{
-                  backgroundColor: COLORS.bgEvBadge,
-                  color: COLORS.textPositive,
-                  padding: "6px 12px",
-                  borderRadius: 8,
-                  fontSize: 16,
-                  fontWeight: 500,
-                  fontFamily: "Montserrat, sans-serif",
-                }}
-              >
-                EV: {mainEV}
-              </div>
-              <div
-                style={{
-                  backgroundColor: getRatingColor(mainRating),
-                  color: COLORS.textPrimary,
-                  padding: "6px 12px",
-                  borderRadius: 8,
-                  fontSize: 16,
-                  fontWeight: 700,
-                  fontFamily: "Montserrat, sans-serif",
-                }}
-              >
-                {mainRating}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Tabs */}
-        <div
-          style={{
-            display: "flex",
-            borderBottom: `1px solid ${COLORS.borderDefault}`,
-            opacity: tabsOpacity,
-          }}
-        >
-          {["Mercados", "Tendencias", "H2H"].map((tab, i) => (
-            <div
-              key={tab}
+            <span style={{ fontSize: '28px' }}>⚽</span>
+            <h3
               style={{
-                flex: 1,
-                padding: "16px 0",
-                textAlign: "center",
-                backgroundColor: i === 0 ? COLORS.bgTab : "transparent",
-                color: i === 0 ? COLORS.textPrimary : COLORS.textTertiary,
-                fontWeight: i === 0 ? 500 : 400,
-                fontSize: 16,
-                fontFamily: "Open Sans, sans-serif",
+                color: COLORS.textPrimary,
+                fontSize: '28px',
+                fontWeight: 'bold',
+                fontFamily: 'Montserrat, sans-serif',
               }}
             >
-              {tab}
-            </div>
-          ))}
-        </div>
-
-        {/* Table Content with scroll animation */}
-        <div
-          style={{
-            padding: 20,
-            transform: `translateY(${scrollY}px)`,
-          }}
-        >
-          {/* Table Headers */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1.1fr 1.1fr 0.7fr 0.8fr 0.7fr 0.6fr 0.8fr",
-              gap: 10,
-              marginBottom: 12,
-              padding: "0 8px",
-              opacity: interpolate(frame, [35, 50], [0, 1], {
-                extrapolateRight: "clamp",
-              }),
-            }}
-          >
-            {["CASA", "MERCADO", "MOMIO", "PROB. IA", "EV", "RATING", ""].map(
-              (header) => (
-                <div
-                  key={header}
-                  style={{
-                    fontSize: 14,
-                    color: COLORS.textTertiary,
-                    fontFamily: "Open Sans, sans-serif",
-                    fontWeight: 600,
-                    letterSpacing: 1,
-                    textAlign: header === "PROB. IA" || header === "EV" || header === "RATING" ? "center" : "left",
-                  }}
-                >
-                  {header}
-                </div>
-              )
-            )}
+              {homeTeam} vs {awayTeam}
+            </h3>
           </div>
 
-          {/* Market Rows */}
-          {markets.map((market, index) => {
-            const rowDelay = 45 + index * 15;
-            const rowOpacity = interpolate(
-              frame,
-              [rowDelay, rowDelay + 15],
-              [0, 1],
-              { extrapolateRight: "clamp", extrapolateLeft: "clamp" }
-            );
-            const rowX = interpolate(
-              frame,
-              [rowDelay, rowDelay + 20],
-              [30, 0],
-              { extrapolateRight: "clamp", extrapolateLeft: "clamp" }
-            );
+          {/* Línea 2: Liga + Fecha/Hora */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              fontSize: '18px',
+              color: COLORS.textTertiary,
+              marginBottom: '16px',
+              fontFamily: 'Open Sans, sans-serif',
+            }}
+          >
+            <span>{league}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span>🕐</span>
+              <span>
+                {date} • {time}
+              </span>
+            </div>
+          </div>
 
-            const hasHighEV = isHighEV(market.ev);
-
-            const glowIntensity = hasHighEV
-              ? interpolate(
-                  frame,
-                  [rowDelay + 15, rowDelay + 30, rowDelay + 45, rowDelay + 60],
-                  [0.3, 0.6, 0.3, 0.6],
-                  { extrapolateRight: "clamp", extrapolateLeft: "clamp" }
-                )
-              : 0;
-
-            return (
+          {/* Línea 3: Badges EV + Rating + Prob IA */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              opacity: badgeOpacity,
+              transform: `scale(${badgeScale})`,
+            }}
+          >
+            {/* Badges izquierda */}
+            <div style={{ display: 'flex', gap: '12px' }}>
+              {/* Badge EV */}
               <div
-                key={index}
                 style={{
-                  display: "grid",
-                  gridTemplateColumns: "1.1fr 1.1fr 0.7fr 0.8fr 0.7fr 0.6fr 0.8fr",
-                  gap: 10,
-                  alignItems: "center",
-                  backgroundColor: COLORS.bgRow,
-                  borderRadius: 10,
-                  padding: 16,
-                  marginBottom: 12,
-                  opacity: rowOpacity,
-                  transform: `translateX(${rowX}px)`,
-                  border: hasHighEV
-                    ? `2px solid ${COLORS.ratingA}`
-                    : "2px solid transparent",
-                  boxShadow: hasHighEV
-                    ? `0 0 20px rgba(34, 197, 94, ${glowIntensity})`
-                    : "none",
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  backgroundColor: COLORS.bgEvBadge,
+                  color: COLORS.textPrimary,
+                  padding: '8px 16px',
+                  borderRadius: '20px',
+                  fontSize: '18px',
+                  fontWeight: 'bold',
+                  fontFamily: 'Montserrat, sans-serif',
                 }}
               >
+                <span>🔥</span>
+                <span>EV {ev}</span>
+              </div>
+
+              {/* Badge Rating */}
+              <div
+                style={{
+                  backgroundColor: COLORS.bgRatingBadge,
+                  color: getRatingColor(rating),
+                  padding: '8px 16px',
+                  borderRadius: '20px',
+                  fontSize: '18px',
+                  fontWeight: 'bold',
+                  fontFamily: 'Montserrat, sans-serif',
+                }}
+              >
+                {rating}
+              </div>
+            </div>
+
+            {/* Prob IA derecha */}
+            <span
+              style={{
+                color: COLORS.textPositive,
+                fontSize: '18px',
+                fontWeight: 'bold',
+                fontFamily: 'Montserrat, sans-serif',
+              }}
+            >
+              Prob. IA {probIA}
+            </span>
+          </div>
+        </div>
+
+        {/* Sección de detalles del pick */}
+        <div
+          style={{
+            padding: '32px',
+            opacity: contentOpacity,
+            transform: `translateY(${contentTranslate}px)`,
+          }}
+        >
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            {/* Fila: Mercado | Selección */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+              <div>
                 <div
                   style={{
+                    fontSize: '16px',
+                    color: COLORS.textTertiary,
+                    marginBottom: '6px',
+                    fontFamily: 'Open Sans, sans-serif',
+                  }}
+                >
+                  Mercado
+                </div>
+                <div
+                  style={{
+                    fontSize: '22px',
                     color: COLORS.textPrimary,
-                    fontSize: 15,
-                    fontFamily: "Open Sans, sans-serif",
+                    fontWeight: '600',
+                    fontFamily: 'Open Sans, sans-serif',
                   }}
                 >
-                  {market.bookmaker}
-                </div>
-                <div
-                  style={{
-                    color: COLORS.textSecondary,
-                    fontSize: 14,
-                    fontFamily: "Open Sans, sans-serif",
-                  }}
-                >
-                  {market.market}
-                </div>
-                <div
-                  style={{
-                    color: COLORS.textPrimary,
-                    fontSize: 16,
-                    fontWeight: 500,
-                    fontFamily: "Montserrat, sans-serif",
-                  }}
-                >
-                  {market.odds}
-                </div>
-                <div
-                  style={{
-                    color: COLORS.textPositive,
-                    fontSize: 15,
-                    fontWeight: 500,
-                    fontFamily: "Montserrat, sans-serif",
-                    textAlign: "center",
-                  }}
-                >
-                  {market.probIA}
-                </div>
-                <div
-                  style={{
-                    color: COLORS.textPositive,
-                    fontSize: 16,
-                    fontWeight: 700,
-                    fontFamily: "Montserrat, sans-serif",
-                    textAlign: "center",
-                  }}
-                >
-                  {market.ev}
-                </div>
-                <div style={{ textAlign: "center" }}>
-                  <span
-                    style={{
-                      backgroundColor: getRatingColor(market.rating),
-                      color: COLORS.textPrimary,
-                      padding: "4px 10px",
-                      borderRadius: 6,
-                      fontSize: 14,
-                      fontWeight: 700,
-                      fontFamily: "Montserrat, sans-serif",
-                    }}
-                  >
-                    {market.rating}
-                  </span>
-                </div>
-                <div>
-                  <div
-                    style={{
-                      backgroundColor: COLORS.buttonGreen,
-                      color: COLORS.textPrimary,
-                      padding: "8px 10px",
-                      borderRadius: 8,
-                      fontSize: 14,
-                      fontFamily: "Open Sans, sans-serif",
-                      textAlign: "center",
-                    }}
-                  >
-                    + Agregar
-                  </div>
+                  {market}
                 </div>
               </div>
-            );
-          })}
+
+              <div>
+                <div
+                  style={{
+                    fontSize: '16px',
+                    color: COLORS.textTertiary,
+                    marginBottom: '6px',
+                    fontFamily: 'Open Sans, sans-serif',
+                  }}
+                >
+                  Selección
+                </div>
+                <div
+                  style={{
+                    fontSize: '22px',
+                    color: COLORS.textPrimary,
+                    fontWeight: '600',
+                    fontFamily: 'Open Sans, sans-serif',
+                  }}
+                >
+                  {selection}
+                </div>
+              </div>
+            </div>
+
+            {/* Stats en filas */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {/* Momio */}
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: '16px',
+                    color: COLORS.textTertiary,
+                    fontFamily: 'Open Sans, sans-serif',
+                  }}
+                >
+                  Momio
+                </span>
+                <span
+                  style={{
+                    fontSize: '28px',
+                    fontWeight: 'bold',
+                    color: COLORS.textPrimary,
+                    fontFamily: 'Montserrat, sans-serif',
+                  }}
+                >
+                  {odds}
+                </span>
+              </div>
+
+              {/* Prob IA */}
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: '16px',
+                    color: COLORS.textTertiary,
+                    fontFamily: 'Open Sans, sans-serif',
+                  }}
+                >
+                  Prob. IA
+                </span>
+                <span
+                  style={{
+                    fontSize: '22px',
+                    fontWeight: '600',
+                    color: COLORS.textPositive,
+                    fontFamily: 'Montserrat, sans-serif',
+                  }}
+                >
+                  {probIA}
+                </span>
+              </div>
+
+              {/* Valor Esperado */}
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: '16px',
+                    color: COLORS.textTertiary,
+                    fontFamily: 'Open Sans, sans-serif',
+                  }}
+                >
+                  Valor Esperado (EV)
+                </span>
+                <span
+                  style={{
+                    fontSize: '28px',
+                    fontWeight: 'bold',
+                    color: COLORS.textPositive,
+                    fontFamily: 'Montserrat, sans-serif',
+                  }}
+                >
+                  {ev}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Botón CTA */}
+        <div
+          style={{
+            padding: '0 32px 32px 32px',
+            borderTop: `1px solid ${COLORS.borderSection}`,
+            paddingTop: '24px',
+            opacity: buttonOpacity,
+            transform: `scale(${buttonScale})`,
+          }}
+        >
+          <button
+            style={{
+              width: '100%',
+              backgroundColor: COLORS.buttonGreen,
+              color: COLORS.textPrimary,
+              padding: '20px',
+              borderRadius: '10px',
+              border: 'none',
+              fontSize: '22px',
+              fontWeight: 'bold',
+              fontFamily: 'Montserrat, sans-serif',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '12px',
+              boxShadow: '0 4px 12px rgba(22, 163, 74, 0.4)',
+            }}
+          >
+            <span style={{ fontSize: '28px' }}>+</span>
+            <span>Agregar a Estrategia</span>
+          </button>
         </div>
       </div>
-    </div>
+    </AbsoluteFill>
   );
 };

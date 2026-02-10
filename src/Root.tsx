@@ -1,15 +1,15 @@
 import { Composition } from "remotion";
 import { VideoPromo } from "./VideoPromo";
-import { DashboardStatsComposition } from "./compositions/DashboardStatsComposition";
+import { BankrollOverviewComposition } from "./compositions/BankrollOverviewComposition";
+import { MonthlyProfitsComposition } from "./compositions/MonthlyProfitsComposition";
+import { MatchCardComposition } from "./compositions/MatchCardComposition";
+import { MatchCardNBAComposition } from "./compositions/MatchCardNBAComposition";
 import { EVPickCardComposition } from "./compositions/EVPickCardComposition";
-import { ParlayBuilderComposition } from "./compositions/ParlayBuilderComposition";
-import { BankrollGraphComposition } from "./compositions/BankrollGraphComposition";
-import { CommunityLeaderboardComposition } from "./compositions/CommunityLeaderboardComposition";
-import { CalendarHeatmapComposition } from "./compositions/CalendarHeatmapComposition";
-import { DashboardEVExplainerComposition } from "./compositions/DashboardEVExplainerComposition";
 import { StrategyBuilderComposition } from "./compositions/StrategyBuilderComposition";
-import { CommunityShowcaseComposition } from "./compositions/CommunityShowcaseComposition";
 import { ParlayValidatorComposition } from "./compositions/ParlayValidatorComposition";
+import { CommunityLeaderboardComposition } from "./compositions/CommunityLeaderboardComposition";
+import { EVPicksMainComposition } from "./compositions/EVPicksMainComposition";
+import { CTAFinalComposition } from "./compositions/CTAFinalComposition";
 import "./style.css";
 
 export const RemotionRoot: React.FC = () => {
@@ -27,8 +27,32 @@ export const RemotionRoot: React.FC = () => {
 
       {/* Individual component previews (vertical 1080x1920, 150 frames) */}
       <Composition
-        id="DashboardStats"
-        component={DashboardStatsComposition}
+        id="BankrollOverview"
+        component={BankrollOverviewComposition}
+        durationInFrames={150}
+        fps={30}
+        width={1080}
+        height={1920}
+      />
+      <Composition
+        id="MonthlyProfits"
+        component={MonthlyProfitsComposition}
+        durationInFrames={150}
+        fps={30}
+        width={1080}
+        height={1920}
+      />
+      <Composition
+        id="MatchCard"
+        component={MatchCardComposition}
+        durationInFrames={150}
+        fps={30}
+        width={1080}
+        height={1920}
+      />
+      <Composition
+        id="MatchCardNBA"
+        component={MatchCardNBAComposition}
         durationInFrames={150}
         fps={30}
         width={1080}
@@ -43,16 +67,16 @@ export const RemotionRoot: React.FC = () => {
         height={1920}
       />
       <Composition
-        id="ParlayBuilder"
-        component={ParlayBuilderComposition}
+        id="StrategyBuilder"
+        component={StrategyBuilderComposition}
         durationInFrames={150}
         fps={30}
         width={1080}
         height={1920}
       />
       <Composition
-        id="BankrollGraph"
-        component={BankrollGraphComposition}
+        id="ParlayValidator"
+        component={ParlayValidatorComposition}
         durationInFrames={150}
         fps={30}
         width={1080}
@@ -67,45 +91,21 @@ export const RemotionRoot: React.FC = () => {
         height={1920}
       />
       <Composition
-        id="CalendarHeatmap"
-        component={CalendarHeatmapComposition}
+        id="EVPicksMain"
+        component={EVPicksMainComposition}
         durationInFrames={150}
         fps={30}
         width={1080}
         height={1920}
       />
       <Composition
-        id="DashboardEVExplainer"
-        component={DashboardEVExplainerComposition}
-        durationInFrames={150}
+        id="CTAFinal"
+        component={CTAFinalComposition}
+        durationInFrames={120}
         fps={30}
         width={1080}
         height={1920}
       />
-      <Composition
-        id="StrategyBuilder"
-        component={StrategyBuilderComposition}
-        durationInFrames={150}
-        fps={30}
-        width={1080}
-        height={1920}
-      />
-      <Composition
-        id="CommunityShowcase"
-        component={CommunityShowcaseComposition}
-        durationInFrames={150}
-        fps={30}
-        width={1080}
-        height={1920}
-      />
-      <Composition
-        id="ParlayValidator"
-        component={ParlayValidatorComposition}
-        durationInFrames={150}
-        fps={30}
-        width={1080}
-        height={1920}
-      />
-    </>
+    </> 
   );
 };

@@ -1,8 +1,8 @@
 import React from 'react';
 import { AbsoluteFill } from 'remotion';
-import { StrategyBuilder } from '../components/StrategyBuilder';
+import { EVPicksMain } from '../components/EVPicksMain';
 
-export const StrategyBuilderComposition: React.FC = () => {
+export const EVPicksMainComposition: React.FC = () => {
   return (
     <AbsoluteFill
       style={{
@@ -13,7 +13,7 @@ export const StrategyBuilderComposition: React.FC = () => {
         justifyContent: 'center',
       }}
     >
-      <StrategyBuilder />
+      <EVPicksMain />
     </AbsoluteFill>
   );
 };

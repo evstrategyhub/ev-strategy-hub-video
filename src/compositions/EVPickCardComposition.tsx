@@ -1,10 +1,6 @@
-import React from "react";
-import { EVPickCard, AppShell } from "../components";
+import React from 'react';
+import { EVPickCard } from '../components/EVPickCard';
 
 export const EVPickCardComposition: React.FC = () => {
-  return (
-    <AppShell activeTab="analisis">
-      <EVPickCard />
-    </AppShell>
-  );
+  return <EVPickCard />;
 };

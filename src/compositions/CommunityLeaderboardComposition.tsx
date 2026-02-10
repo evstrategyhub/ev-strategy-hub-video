@@ -1,10 +1,19 @@
-import React from "react";
-import { CommunityLeaderboard, AppShell } from "../components";
+import React from 'react';
+import { AbsoluteFill } from 'remotion';
+import { CommunityLeaderboard } from '../components/CommunityLeaderboard';
 
 export const CommunityLeaderboardComposition: React.FC = () => {
   return (
-    <AppShell activeTab="community">
+    <AbsoluteFill
+      style={{
+        backgroundColor: '#111827',
+        padding: '60px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
       <CommunityLeaderboard />
-    </AppShell>
+    </AbsoluteFill>
   );
 };
