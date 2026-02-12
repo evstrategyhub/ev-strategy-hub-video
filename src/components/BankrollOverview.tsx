@@ -26,21 +26,21 @@ export const BankrollOverview: React.FC<BankrollOverviewProps> = ({
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // Animación de entrada (primeros 0.5s = 15 frames a 30fps)
-  const fadeIn = interpolate(frame, [0, 15], [0, 1], {
+// Animación de entrada - INICIO: frame 2 (0.05s a 30fps)
+  const fadeIn = interpolate(frame, [2, 17], [0, 1], {
     extrapolateRight: 'clamp',
     easing: Easing.out(Easing.ease),
   });
 
-  const slideUp = interpolate(frame, [0, 15], [50, 0], {
+  const slideUp = interpolate(frame, [2, 17], [50, 0], {
     extrapolateRight: 'clamp',
     easing: Easing.out(Easing.ease),
   });
 
-  // Animación de la gráfica (dibuja la línea progresivamente) - sincronizado frame 15-60 (75 frames total)
+  // Animación de la gráfica (dibuja la línea progresivamente) - frame 17-60
   const graphProgress = interpolate(
     frame,
-    [15, 60],
+    [17, 60],
     [0, 100],
     {
       extrapolateRight: 'clamp',
@@ -49,10 +49,10 @@ export const BankrollOverview: React.FC<BankrollOverviewProps> = ({
     }
   );
 
-  // Animación del bankroll (frame 15-60)
+  // Animación del bankroll (frame 17-60)
   const animatedBankroll = interpolate(
     frame,
-    [15, 60],
+    [17, 60],
     [0, bankrollData.currentBankroll],
     {
       extrapolateRight: 'clamp',

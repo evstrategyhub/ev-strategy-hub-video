@@ -536,4 +536,4 @@ export const MatchCardNBA: React.FC<MatchCardNBAProps> = ({
       </div>
     </div>
   );
-};
+}; 

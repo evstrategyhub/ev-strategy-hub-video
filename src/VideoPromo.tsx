@@ -1,10 +1,8 @@
 import React from 'react';
-import { AbsoluteFill, Sequence, useCurrentFrame, interpolate, Easing, Img, staticFile } from 'remotion';
+import { AbsoluteFill, Sequence, useCurrentFrame, interpolate, Easing, Img, staticFile, Audio } from 'remotion';
 import { BankrollOverview } from './components/BankrollOverview';
 import { MonthlyProfits } from './components/MonthlyProfits';
-import { CTAFinal } from './components/CTAFinal';
 import { MatchCard } from './components/MatchCard';
-import { MatchCardNBA } from './components/MatchCardNBA';
 
 export const VideoPromo: React.FC = () => {
   const bankrollData = {
@@ -72,9 +70,13 @@ export const VideoPromo: React.FC = () => {
   );
 
   return (
-    <AbsoluteFill style={{ backgroundColor: '#111827' }}>
-      {/* ESCENA 1: Hook - 2.5 segundos (75 frames) */}
-      <Sequence from={0} durationInFrames={75}>
+  <AbsoluteFill style={{ backgroundColor: '#111827' }}>
+    {/* Audio de fondo */}
+    <Audio src={staticFile('audio/musica.mp3')} volume={0.4} />
+
+    {/* ESCENA 1: Hook - 3 segundos (0-90 frames) */}
+      {/* ESCENA 1: Hook - 3 segundos (0-90 frames) */}
+      <Sequence from={0} durationInFrames={90}>
         <Scene1Hook
           bankrollData={bankrollData}
           bankrollHistory={bankrollHistory}
@@ -87,31 +89,21 @@ export const VideoPromo: React.FC = () => {
         />
       </Sequence>
 
-      {/* ESCENA 2 - BEAT 1: MatchCard centrado (frames 75-195) */}
-      <Sequence from={75} durationInFrames={120}>
+      {/* ESCENA 2: MatchCard - 5 segundos (90-240 frames) */}
+      <Sequence from={90} durationInFrames={150}>
         <Scene2Beat1 />
       </Sequence>
 
-      {/* ESCENA 2 - BEAT 2: MatchCard + MatchCardNBA lado a lado (frames 195-315) */}
-      <Sequence from={195} durationInFrames={120}>
-        <Scene2Beat2 />
-      </Sequence>
-
-      {/* ESCENA 2 - BEAT 3: MatchCardNBA Props centrado (frames 315-435) */}
-      <Sequence from={315} durationInFrames={120}>
-        <Scene2Beat3 />
-      </Sequence>
-
-      {/* ESCENA FINAL: CTA */}
-      <Sequence from={420} durationInFrames={120}>
-        <CTAFinal />
+      {/* ESCENA 3: CTA Final - 7 segundos (240-450 frames) */}
+      <Sequence from={240} durationInFrames={230}>
+        <CTAFinalNew />
       </Sequence>
     </AbsoluteFill>
   );
 };
 
 // ============================================================================
-// ESCENA 1: HOOK - SPACING AJUSTADO
+// ESCENA 1: HOOK
 // ============================================================================
 interface Scene1Props {
   bankrollData: any;
@@ -136,31 +128,23 @@ const Scene1Hook: React.FC<Scene1Props> = ({
 }) => {
   const frame = useCurrentFrame();
 
-  // Animated background
   const bgGlowOpacity = interpolate(
     frame,
-    [0, 20, 55, 75],
+    [0, 20, 70, 90],
     [0, 0.3, 0.3, 0],
     { extrapolateRight: 'clamp' }
   );
 
   const bgGlowScale = interpolate(
     frame,
-    [0, 75],
+    [0, 90],
     [0.8, 1.2],
     { extrapolateRight: 'clamp' }
   );
 
   return (
     <AbsoluteFill>
-      {/* Fondo animado con gradientes */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background: 'radial-gradient(circle at 30% 40%, rgba(34, 197, 94, 0.15), transparent), radial-gradient(circle at 70% 60%, rgba(59, 130, 246, 0.1), transparent), #111827',
-        }}
-      />
+      <ConsistentBackground />
 
       {/* Glow animado central */}
       <div
@@ -177,19 +161,8 @@ const Scene1Hook: React.FC<Scene1Props> = ({
         }}
       />
 
-      {/* Noise texture overlay */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          opacity: 0.03,
-          mixBlendMode: 'overlay',
-          backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\'/%3E%3C/svg%3E")',
-        }}
-      />
-
       {/* BankrollOverview - TOP */}
-      <div style={{ position: 'absolute', top: 40, left: 0, width: '100%' }}>
+      <div style={{ position: 'absolute', top: 80, left: 0, width: '100%' }}>
         <div style={{ transform: 'scale(0.8)', transformOrigin: 'top center' }}>
           <BankrollOverview
             bankrollData={bankrollData}
@@ -198,11 +171,11 @@ const Scene1Hook: React.FC<Scene1Props> = ({
         </div>
       </div>
 
-      {/* TEXTO + LOGO - MIDDLE (BAJADO) */}
+      {/* TEXTO + LOGO - MIDDLE */}
       <div
         style={{
           position: 'absolute',
-          top: 780,
+          top: 720,
           left: 0,
           width: '100%',
           height: 280,
@@ -218,7 +191,7 @@ const Scene1Hook: React.FC<Scene1Props> = ({
       </div>
 
       {/* MonthlyProfits - BOTTOM */}
-      <div style={{ position: 'absolute', top: 1180, left: 0, width: '100%' }}>
+      <div style={{ position: 'absolute', top: 1400, left: 0, width: '100%' }}>
         <div style={{ transform: 'scale(0.8)', transformOrigin: 'top center' }}>
           <MonthlyProfits
             selectedMonth={selectedMonth}
@@ -251,7 +224,6 @@ const AnimatedTextImproved: React.FC = () => {
 
   return (
     <>
-      {/* Línea 1: "Un bankroll así no es suerte" */}
       <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap', justifyContent: 'center' }}>
         {words.map((word, i) => {
           const opacity = interpolate(frame, [word.delay, word.delay + 5], [0, 1], {
@@ -267,7 +239,7 @@ const AnimatedTextImproved: React.FC = () => {
             <span
               key={i}
               style={{
-                fontSize: 72,
+                fontSize: 56,
                 fontWeight: 900,
                 color: '#22c55e',
                 textShadow: '0 0 40px rgba(34, 197, 94, 0.6), 0 4px 12px rgba(0,0,0,0.8)',
@@ -283,10 +255,7 @@ const AnimatedTextImproved: React.FC = () => {
         })}
       </div>
 
-      {/* Línea 2: "Se construye con" */}
       <TextLine2Improved />
-
-      {/* Logo */}
       <LogoAnimatedImproved />
     </>
   );
@@ -307,7 +276,7 @@ const TextLine2Improved: React.FC = () => {
   return (
     <p
       style={{
-        fontSize: 52,
+        fontSize: 42,
         fontWeight: 600,
         color: '#d1d5db',
         textAlign: 'center',
@@ -335,7 +304,6 @@ const LogoAnimatedImproved: React.FC = () => {
     easing: Easing.out(Easing.ease),
   });
 
-  // Glow pulsante
   const glowIntensity = interpolate(
     frame,
     [45, 55, 65, 75],
@@ -345,7 +313,6 @@ const LogoAnimatedImproved: React.FC = () => {
 
   return (
     <div style={{ position: 'relative' }}>
-      {/* Glow behind logo */}
       <div
         style={{
           position: 'absolute',
@@ -359,7 +326,7 @@ const LogoAnimatedImproved: React.FC = () => {
       <Img
         src={staticFile('images/logo.png')}
         style={{
-          width: 500,
+          width: 420,
           height: 'auto',
           opacity,
           transform: `scale(${scale})`,
@@ -372,204 +339,69 @@ const LogoAnimatedImproved: React.FC = () => {
 };
 
 // ============================================================================
-// ESCENA 2 - BEAT 1: MatchCard centrado - MOBILE OPTIMIZADO
+// BACKGROUND COMPONENT - REUTILIZABLE
+// ============================================================================
+const ConsistentBackground: React.FC = () => {
+  return (
+    <>
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'radial-gradient(circle at 30% 40%, rgba(34, 197, 94, 0.15), transparent), radial-gradient(circle at 70% 60%, rgba(59, 130, 246, 0.1), transparent), #111827',
+        }}
+      />
+
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          opacity: 0.03,
+          mixBlendMode: 'overlay',
+          backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.9\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\'/%3E%3C/svg%3E")',
+        }}
+      />
+    </>
+  );
+};
+
+// ============================================================================
+// ESCENA 2: MatchCard + COPY NUEVO
 // ============================================================================
 const Scene2Beat1: React.FC = () => {
   const frame = useCurrentFrame();
 
   const opacity = interpolate(
     frame,
-    [0, 20, 100, 120],
+    [0, 20, 130, 150],
     [0, 1, 1, 0],
     { extrapolateRight: 'clamp', extrapolateLeft: 'clamp' }
   );
 
-  return (
-    <AbsoluteFill style={{ opacity }}>
-      {/* Fondo con grid pattern */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background: 'linear-gradient(0deg, rgba(55, 65, 81, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(55, 65, 81, 0.03) 1px, transparent 1px), #111827',
-          backgroundSize: '40px 40px',
-        }}
-      />
+  // Copy único centrado
+  const copyOpacity = interpolate(frame, [0, 20], [0, 1], {
+    extrapolateRight: 'clamp',
+  });
 
-      {/* Texto arriba */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 80,
-          left: 0,
-          width: '100%',
-          textAlign: 'center',
-          padding: '0 60px',
-        }}
-      >
-        <p
-          style={{
-            fontSize: 56,
-            fontWeight: 700,
-            color: '#ffffff',
-            textShadow: '0 4px 16px rgba(0,0,0,0.8)',
-            fontFamily: 'Montserrat, sans-serif',
-            margin: 0,
-            lineHeight: 1.2,
-          }}
-        >
-          Convertimos momios en probabilidades con modelos IA
-        </p>
-      </div>
-
-      {/* MatchCard centrado - AHORA MOBILE OPTIMIZADO */}
-      <MatchCard 
-        team1="América"
-        team2="Guadalajara"
-        league="Liga MX"
-        time="19:00"
-        markets={[
-          {
-            bookmaker: 'Caliente',
-            market: 'Ganador',
-            selection: 'Local',
-            odds: '1.91',
-            probIA: '54.2',
-            ev: '8.3',
-          },
-          {
-            bookmaker: 'Betway',
-            market: 'Ambos Anotan',
-            selection: 'Sí',
-            odds: '2.45',
-            probIA: '52.8',
-            ev: '5.7',
-          },
-          {
-            bookmaker: 'bet365',
-            market: 'Total Goles',
-            selection: 'Más 2.5',
-            odds: '1.95',
-            probIA: '58.1',
-            ev: '12.4',
-          },
-        ]}
-      />
-    </AbsoluteFill>
-  );
-};
-
-// ============================================================================
-// ESCENA 2 - BEAT 2: MatchCard + MatchCardNBA Game Odds lado a lado
-// ============================================================================
-const Scene2Beat2: React.FC = () => {
-  const frame = useCurrentFrame();
-
-  const opacity = interpolate(
-    frame,
-    [0, 20, 100, 120],
-    [0, 1, 1, 0],
-    { extrapolateRight: 'clamp', extrapolateLeft: 'clamp' }
-  );
+  const copyY = interpolate(frame, [0, 25], [30, 0], {
+    extrapolateRight: 'clamp',
+    easing: Easing.out(Easing.ease),
+  });
 
   return (
     <AbsoluteFill style={{ opacity }}>
-      {/* Fondo con diagonal lines */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background: 'repeating-linear-gradient(45deg, #111827, #111827 20px, rgba(34, 197, 94, 0.02) 20px, rgba(34, 197, 94, 0.02) 40px)',
-        }}
-      />
+      <ConsistentBackground />
 
-      {/* Texto arriba */}
+      {/* Copy centrado */}
       <div
         style={{
           position: 'absolute',
-          top: 80,
+          top: 140,
           left: 0,
           width: '100%',
-          textAlign: 'center',
-          padding: '0 60px',
-        }}
-      >
-        <p
-          style={{
-            fontSize: 56,
-            fontWeight: 700,
-            color: '#ffffff',
-            textShadow: '0 4px 16px rgba(0,0,0,0.8)',
-            fontFamily: 'Montserrat, sans-serif',
-            margin: 0,
-            lineHeight: 1.2,
-          }}
-        >
-          En todos los mercados de fútbol y deportes americanos
-        </p>
-      </div>
-
-      {/* MatchCard izquierda (50%) - SCALE PEQUEÑO */}
-      <div style={{ position: 'absolute', top: 280, left: '-25%', width: '100%' }}>
-        <div style={{ transform: 'scale(0.55)', transformOrigin: 'top center' }}>
-          <MatchCard 
-            team1="Cruz Azul"
-            team2="Pumas"
-            league="Liga MX"
-            time="21:00"
-          />
-        </div>
-      </div>
-
-      {/* MatchCardNBA Game Odds derecha (50%) - SCALE PEQUEÑO */}
-      <div style={{ position: 'absolute', top: 280, left: '25%', width: '100%' }}>
-        <div style={{ transform: 'scale(0.55)', transformOrigin: 'top center' }}>
-          <MatchCardNBA 
-            type="game"
-            team1="Lakers"
-            team2="Warriors"
-            league="NBA"
-            time="22:00"
-          />
-        </div>
-      </div>
-    </AbsoluteFill>
-  );
-};
-
-// ============================================================================
-// ESCENA 2 - BEAT 3: MatchCardNBA Player Props centrado
-// ============================================================================
-const Scene2Beat3: React.FC = () => {
-  const frame = useCurrentFrame();
-
-  const opacity = interpolate(
-    frame,
-    [0, 20, 100, 120],
-    [0, 1, 1, 0],
-    { extrapolateRight: 'clamp', extrapolateLeft: 'clamp' }
-  );
-
-  return (
-    <AbsoluteFill style={{ opacity }}>
-      {/* Fondo con radial glow */}
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          background: 'radial-gradient(ellipse at center, rgba(34, 197, 94, 0.06), transparent 70%), #111827',
-        }}
-      />
-
-      {/* Texto arriba */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 80,
-          left: 0,
-          width: '100%',
-          textAlign: 'center',
-          padding: '0 60px',
+          padding: '0 80px',
+          opacity: copyOpacity,
+          transform: `translateY(${copyY}px)`,
         }}
       >
         <p
@@ -577,53 +409,282 @@ const Scene2Beat3: React.FC = () => {
             fontSize: 52,
             fontWeight: 700,
             color: '#ffffff',
-            textShadow: '0 4px 16px rgba(0,0,0,0.8)',
+            textShadow: '0 4px 20px rgba(0,0,0,0.8)',
             fontFamily: 'Montserrat, sans-serif',
             margin: 0,
-            lineHeight: 1.2,
+            textAlign: 'center',
+            lineHeight: 1.4,
           }}
         >
-          Y análisis de player props en NBA, NFL y MLB
+          Usa nuestro modelo predictivo para encontrar picks con{' '}
+          <span style={{ color: '#22c55e' }}>valor</span> y{' '}
+          <span style={{ color: '#22c55e' }}>probabilidades a tu favor</span>
         </p>
       </div>
 
-      {/* MatchCardNBA Player Props centrado */}
-      <MatchCardNBA 
-        type="props"
-        team1="Lakers"
-        team2="Warriors"
-        league="NBA"
-        time="22:00"
-        playerProps={[
-          {
-            player: 'LeBron James',
-            stat: 'Puntos',
-            line: '25.5',
-            projection: '28.3',
-            odds: '-110',
-            probIA: '62.4',
-            ev: '13.2',
-          },
-          {
-            player: 'Stephen Curry',
-            stat: 'Triples',
-            line: '4.5',
-            projection: '5.2',
-            odds: '+105',
-            probIA: '58.7',
-            ev: '9.8',
-          },
-          {
-            player: 'Anthony Davis',
-            stat: 'Rebotes',
-            line: '10.5',
-            projection: '12.1',
-            odds: '-120',
-            probIA: '64.3',
-            ev: '14.5',
-          },
-        ]}
-      />
+      {/* MatchCard */}
+      <div style={{ position: 'absolute', top: 350, left: 0, width: '100%' }}>
+        <MatchCard 
+          team1="Benfica (Local)"
+          team2="Real Madrid (Visita)"
+          league="Champions League"
+          datetime="17/2/2026, 14:00:00"
+        />
+      </div>
     </AbsoluteFill>
+  );
+};
+
+// ============================================================================
+// ESCENA 3: CTA FINAL
+// ============================================================================
+const CTAFinalNew: React.FC = () => {
+  const frame = useCurrentFrame();
+
+  const opacity = interpolate(frame, [0, 20], [0, 1], {
+    extrapolateRight: 'clamp',
+  });
+
+  const headlineScale = interpolate(frame, [10, 30], [0.8, 1], {
+    extrapolateRight: 'clamp',
+    easing: Easing.out(Easing.ease),
+  });
+
+  const headlineOpacity = interpolate(frame, [10, 25], [0, 1], {
+    extrapolateRight: 'clamp',
+  });
+
+  const subheadlineOpacity = interpolate(frame, [20, 35], [0, 1], {
+    extrapolateRight: 'clamp',
+  });
+
+  const subheadlineY = interpolate(frame, [20, 35], [30, 0], {
+    extrapolateRight: 'clamp',
+    easing: Easing.out(Easing.ease),
+  });
+
+  const logoOpacity = interpolate(frame, [120, 135], [0, 1], {
+    extrapolateRight: 'clamp',
+  });
+
+  const logoScale = interpolate(frame, [120, 145], [0.7, 1], {
+    extrapolateRight: 'clamp',
+    easing: Easing.out(Easing.ease),
+  });
+
+  const urlOpacity = interpolate(frame, [145, 160], [0, 1], {
+    extrapolateRight: 'clamp',
+  });
+
+  const glowPulse = interpolate(
+    frame % 30,
+    [0, 15, 30],
+    [0.4, 0.8, 0.4],
+    { extrapolateRight: 'clamp' }
+  );
+
+  const features = [
+    'Crea estrategias con probabilidades a tu favor',
+    'Gestión de Bankroll Profesional',
+    'Creación de Estrategia (Straight Bet o Kelly)',
+    'Calificador de Combinadas',
+    'Acceso a la comunidad de Discord',
+    'Leaderboards de Comunidad por premios',
+  ];
+
+  return (
+    <AbsoluteFill style={{ opacity }}>
+      <ConsistentBackground />
+
+      <div
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          width: 800,
+          height: 800,
+          background: 'radial-gradient(circle, rgba(34, 197, 94, 0.25), transparent 70%)',
+          transform: 'translate(-50%, -50%)',
+          opacity: glowPulse,
+          filter: 'blur(100px)',
+        }}
+      />
+
+      <div
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: 28,
+          width: '100%',
+          padding: '0 80px',
+        }}
+      >
+        {/* Headline */}
+        <h1
+          style={{
+            fontSize: 96,
+            fontWeight: 900,
+            color: '#22c55e',
+            textShadow: '0 0 60px rgba(34, 197, 94, 0.8), 0 8px 24px rgba(0,0,0,0.9)',
+            fontFamily: 'Montserrat, sans-serif',
+            margin: 0,
+            textAlign: 'center',
+            opacity: headlineOpacity,
+            transform: `scale(${headlineScale})`,
+          }}
+        >
+          Regístrate Gratis
+        </h1>
+
+        {/* Subheadline */}
+        <p
+          style={{
+            fontSize: 56,
+            fontWeight: 600,
+            color: '#d1d5db',
+            textShadow: '0 4px 16px rgba(0,0,0,0.8)',
+            fontFamily: 'Montserrat, sans-serif',
+            margin: 0,
+            textAlign: 'center',
+            lineHeight: 1.3,
+            opacity: subheadlineOpacity,
+            transform: `translateY(${subheadlineY}px)`,
+          }}
+        >
+          Y conviértete en un Apostador Inteligente
+        </p>
+
+        {/* Features List */}
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 22,
+            width: '100%',
+            maxWidth: 900,
+            marginTop: 12,
+          }}
+        >
+          {features.map((feature, i) => (
+            <FeatureBullet key={i} text={feature} index={i} />
+          ))}
+        </div>
+
+        {/* Logo */}
+        <div style={{ position: 'relative', opacity: logoOpacity, marginTop: 20 }}>
+          <div
+            style={{
+              position: 'absolute',
+              inset: -40,
+              background: 'radial-gradient(circle, rgba(34, 197, 94, 0.4), transparent 70%)',
+              opacity: glowPulse,
+              filter: 'blur(60px)',
+            }}
+          />
+
+          <Img
+            src={staticFile('images/logo.png')}
+            style={{
+              width: 420,
+              height: 'auto',
+              transform: `scale(${logoScale})`,
+              filter: 'drop-shadow(0 15px 40px rgba(0, 0, 0, 0.6))',
+              position: 'relative',
+            }}
+          />
+        </div>
+
+        {/* URL */}
+        <p
+          style={{
+            fontSize: 36,
+            fontWeight: 500,
+            color: '#9ca3af',
+            fontFamily: 'Open Sans, sans-serif',
+            margin: 0,
+            opacity: urlOpacity,
+          }}
+        >
+          evstrategyhub.com
+        </p>
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+// ============================================================================
+// FEATURE BULLET COMPONENT
+// ============================================================================
+interface FeatureBulletProps {
+  text: string;
+  index: number;
+}
+
+const FeatureBullet: React.FC<FeatureBulletProps> = ({ text, index }) => {
+  const frame = useCurrentFrame();
+  const delay = 40 + index * 8;
+
+  const opacity = interpolate(frame, [delay, delay + 12], [0, 1], {
+    extrapolateRight: 'clamp',
+  });
+
+  const translateX = interpolate(frame, [delay, delay + 15], [-20, 0], {
+    extrapolateRight: 'clamp',
+    easing: Easing.out(Easing.ease),
+  });
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 18,
+        opacity,
+        transform: `translateX(${translateX}px)`,
+      }}
+    >
+      {/* Checkmark */}
+      <div
+        style={{
+          width: 32,
+          height: 32,
+          borderRadius: '50%',
+          backgroundColor: '#22c55e',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexShrink: 0,
+          boxShadow: '0 0 20px rgba(34, 197, 94, 0.5)',
+        }}
+      >
+        <svg width="18" height="18" viewBox="0 0 16 16" fill="none">
+          <path
+            d="M13.3333 4L6 11.3333L2.66667 8"
+            stroke="#111827"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </div>
+
+      {/* Text */}
+      <span
+        style={{
+          fontSize: 36,
+          fontWeight: 500,
+          color: '#ffffff',
+          fontFamily: 'Open Sans, sans-serif',
+          lineHeight: 1.4,
+        }}
+      >
+        {text}
+      </span>
+    </div>
   );
 };

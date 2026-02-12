@@ -1,69 +1,84 @@
 import React from 'react';
 import { useCurrentFrame, useVideoConfig, interpolate, Easing, spring } from 'remotion';
 
-interface Market {
-  bookmaker: string;
-  market: string;
+interface MarketOption {
   selection: string;
+  bookmaker: string;
   odds: string;
+  probM: string;
   probIA: string;
-  ev: string;
+  evGrade: 'A' | 'D' | 'F';
+}
+
+interface MarketGroup {
+  marketName: string;
+  options: MarketOption[];
 }
 
 interface MatchCardProps {
   team1?: string;
   team2?: string;
   league?: string;
-  time?: string;
-  markets?: Market[];
+  datetime?: string;
+  marketGroups?: MarketGroup[];
 }
 
 const COLORS = {
   bgCard: '#1f2937',
   bgHeader: '#111827',
   bgRow: 'rgba(55, 65, 81, 0.5)',
+  bgSectionHeader: '#1f2937',
   borderDefault: '#374151',
   textPrimary: '#ffffff',
   textSecondary: '#9ca3af',
   textPositive: '#22c55e',
+  gradeA: '#22c55e',
+  gradeD: '#f59e0b',
+  gradeF: '#ef4444',
 };
 
 export const MatchCard: React.FC<MatchCardProps> = ({
-  team1 = 'América',
-  team2 = 'Guadalajara',
-  league = 'Liga MX',
-  time = '19:00',
-  markets = [
+  team1 = 'Benfica (Local)',
+  team2 = 'Real Madrid (Visita)',
+  league = 'Champions League',
+  datetime = '17/2/2026, 14:00:00',
+  marketGroups = [
     {
-      bookmaker: 'Caliente',
-      market: 'Ganador',
-      selection: 'Local',
-      odds: '1.91',
-      probIA: '54.2',
-      ev: '8.3',
+      marketName: 'Ganador',
+      options: [
+        { selection: 'Local', bookmaker: 'Bet365', odds: '+300', probM: '25.0', probIA: '42.88', evGrade: 'A' },
+        { selection: 'Empate', bookmaker: 'Bet365', odds: '+275', probM: '26.7', probIA: '22.65', evGrade: 'F' },
+        { selection: 'Visita', bookmaker: 'Bet365', odds: '-120', probM: '54.6', probIA: '34.43', evGrade: 'F' },
+      ],
     },
     {
-      bookmaker: 'Betway',
-      market: 'Ambos Anotan',
-      selection: 'Sí',
-      odds: '2.45',
-      probIA: '52.8',
-      ev: '5.7',
+      marketName: 'Ambos Anotan',
+      options: [
+        { selection: 'Sí', bookmaker: 'Bet365', odds: '-200', probM: '66.7', probIA: '62.12', evGrade: 'D' },
+        { selection: 'No', bookmaker: 'Bet365', odds: '+150', probM: '40.0', probIA: '37.88', evGrade: 'D' },
+      ],
     },
     {
-      bookmaker: 'bet365',
-      market: 'Total Goles',
-      selection: 'Más 2.5',
-      odds: '1.95',
-      probIA: '58.1',
-      ev: '12.4',
+      marketName: 'Total Goles',
+      options: [
+        { selection: 'Más 2.5', bookmaker: 'Bet365', odds: '-189', probM: '65.4', probIA: '61.47', evGrade: 'D' },
+        { selection: 'Menos 2.5', bookmaker: 'Bet365', odds: '+150', probM: '40.0', probIA: '38.53', evGrade: 'D' },
+      ],
+    },
+    {
+      marketName: 'Doble Oportunidad',
+      options: [
+        { selection: 'Local o Empate', bookmaker: 'Bet365', odds: '-111', probM: '52.6', probIA: '65.53', evGrade: 'A' },
+        { selection: 'Empate o Visita', bookmaker: 'Bet365', odds: '-455', probM: '82.0', probIA: '57.08', evGrade: 'F' },
+        { selection: 'Local o Visita', bookmaker: 'Bet365', odds: '-400', probM: '80.0', probIA: '77.31', evGrade: 'D' },
+      ],
     },
   ],
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // Animación de entrada del CARD COMPLETO
+  // Animación de entrada del CARD
   const cardFadeIn = interpolate(frame, [0, fps * 0.5], [0, 1], {
     extrapolateRight: 'clamp',
     easing: Easing.out(Easing.ease),
@@ -74,9 +89,23 @@ export const MatchCard: React.FC<MatchCardProps> = ({
     easing: Easing.out(Easing.ease),
   });
 
-  // Animación de SCALE para Prob IA y EV (LO IMPORTANTE - EL HIGHLIGHT)
-  const getValueScale = (index: number) => {
-    const startFrame = fps * 0.6 + index * 8;
+  // Función para obtener color de EV grade
+  const getGradeColor = (grade: 'A' | 'D' | 'F'): string => {
+    switch (grade) {
+      case 'A':
+        return COLORS.gradeA;
+      case 'D':
+        return COLORS.gradeD;
+      case 'F':
+        return COLORS.gradeF;
+      default:
+        return COLORS.textSecondary;
+    }
+  };
+
+  // Animación de SCALE para Prob IA y EV (por grupo)
+  const getValueScale = (groupIndex: number, optionIndex: number) => {
+    const startFrame = fps * 0.6 + groupIndex * 12 + optionIndex * 4;
     return spring({
       frame: frame - startFrame,
       fps,
@@ -88,19 +117,14 @@ export const MatchCard: React.FC<MatchCardProps> = ({
     });
   };
 
-  // Pulso sutil en Prob IA y EV
-  const getPulse = (index: number) => {
-    const delay = fps * 1.2 + index * 8;
+  // Pulso en Prob IA y EV
+  const getPulse = (groupIndex: number, optionIndex: number) => {
+    const delay = fps * 1.2 + groupIndex * 12 + optionIndex * 4;
     if (frame < delay) return 1;
-    
-    return interpolate(
-      (frame - delay) % 30,
-      [0, 15, 30],
-      [1, 1.08, 1],
-      {
-        easing: Easing.inOut(Easing.ease),
-      }
-    );
+
+    return interpolate((frame - delay) % 30, [0, 15, 30], [1, 1.08, 1], {
+      easing: Easing.inOut(Easing.ease),
+    });
   };
 
   return (
@@ -132,7 +156,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({
           style={{
             backgroundColor: COLORS.bgHeader,
             borderBottom: `1px solid ${COLORS.borderDefault}`,
-            padding: '32px',
+            padding: '24px 32px',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
@@ -142,181 +166,258 @@ export const MatchCard: React.FC<MatchCardProps> = ({
             <div
               style={{
                 color: COLORS.textPrimary,
-                fontSize: '30px',
+                fontSize: '28px',
+                fontWeight: 'bold',
+                fontFamily: 'Montserrat, sans-serif',
+                marginBottom: '4px',
+              }}
+            >
+              {team1}
+            </div>
+            <div
+              style={{
+                color: COLORS.textPrimary,
+                fontSize: '28px',
                 fontWeight: 'bold',
                 fontFamily: 'Montserrat, sans-serif',
                 marginBottom: '8px',
               }}
             >
-              {team1} vs {team2}
+              {team2}
             </div>
             <div
               style={{
                 color: COLORS.textSecondary,
-                fontSize: '20px',
+                fontSize: '18px',
                 fontFamily: 'Open Sans, sans-serif',
               }}
             >
-              {league} • {time}
+              {league}
             </div>
+          </div>
+          <div
+            style={{
+              color: COLORS.textSecondary,
+              fontSize: '18px',
+              fontFamily: 'Open Sans, sans-serif',
+              textAlign: 'right',
+            }}
+          >
+            {datetime}
           </div>
         </div>
 
-        {/* Table Header */}
+        {/* Tabs */}
         <div
           style={{
-            display: 'grid',
-            gridTemplateColumns: '1.2fr 1.5fr 1.2fr 0.9fr 1fr 1fr 1fr',
-            gap: '0',
-            fontSize: '18px',
-            color: COLORS.textSecondary,
+            display: 'flex',
             backgroundColor: COLORS.bgHeader,
-            padding: '20px 32px',
-            fontFamily: 'Open Sans, sans-serif',
-            fontWeight: '500',
+            borderBottom: `1px solid ${COLORS.borderDefault}`,
+            padding: '0 32px',
           }}
         >
-          <div style={{ textAlign: 'center' }}>Mercado</div>
-          <div style={{ textAlign: 'center' }}>Bookmaker</div>
-          <div style={{ textAlign: 'center' }}>Selección</div>
-          <div style={{ textAlign: 'center' }}>Momio</div>
-          <div style={{ textAlign: 'center' }}>Prob. M</div>
-          {/* PROB IA - HEADER EN VERDE Y MÁS GRANDE */}
-          <div 
-            style={{ 
-              textAlign: 'center', 
-              fontWeight: 'bold', 
+          <div
+            style={{
+              flex: 1,
+              padding: '16px 0',
+              textAlign: 'center',
               color: COLORS.textPositive,
-              fontSize: '22px',
+              fontSize: '18px',
+              fontWeight: '600',
+              fontFamily: 'Open Sans, sans-serif',
+              borderBottom: `2px solid ${COLORS.textPositive}`,
             }}
           >
-            Prob. IA
+            Mercados
           </div>
-          {/* EV - HEADER EN VERDE Y MÁS GRANDE */}
-          <div 
-            style={{ 
-              textAlign: 'center', 
-              fontWeight: 'bold', 
-              color: COLORS.textPositive,
-              fontSize: '22px',
+          <div
+            style={{
+              flex: 1,
+              padding: '16px 0',
+              textAlign: 'center',
+              color: COLORS.textSecondary,
+              fontSize: '18px',
+              fontFamily: 'Open Sans, sans-serif',
             }}
           >
-            EV (%)
+            Tendencias
+          </div>
+          <div
+            style={{
+              flex: 1,
+              padding: '16px 0',
+              textAlign: 'center',
+              color: COLORS.textSecondary,
+              fontSize: '18px',
+              fontFamily: 'Open Sans, sans-serif',
+            }}
+          >
+            H2H
           </div>
         </div>
 
-        {/* Table Rows */}
-        {markets.map((market, index) => {
-          const scale = getValueScale(index);
-          const pulse = getPulse(index);
-          
-          return (
+        {/* Dropdown "Mercado: Todos" */}
+        <div
+          style={{
+            padding: '16px 32px',
+            backgroundColor: COLORS.bgHeader,
+            borderBottom: `1px solid ${COLORS.borderDefault}`,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+          }}
+        >
+          <span
+            style={{
+              color: COLORS.textPrimary,
+              fontSize: '16px',
+              fontFamily: 'Open Sans, sans-serif',
+            }}
+          >
+            Mercado:
+          </span>
+          <span
+            style={{
+              color: COLORS.textPrimary,
+              fontSize: '16px',
+              fontWeight: '600',
+              fontFamily: 'Open Sans, sans-serif',
+            }}
+          >
+            Todos
+          </span>
+        </div>
+
+        {/* Market Groups */}
+        {marketGroups.map((group, groupIndex) => (
+          <div key={groupIndex} style={{ marginBottom: groupIndex < marketGroups.length - 1 ? '8px' : '0' }}>
+            {/* Section Header */}
             <div
-              key={index}
               style={{
                 display: 'grid',
-                gridTemplateColumns: '1.2fr 1.5fr 1.2fr 0.9fr 1fr 1fr 1fr',
+                gridTemplateColumns: '1.3fr 1fr 0.9fr 0.9fr 1fr 0.7fr',
                 gap: '0',
-                fontSize: '18px',
-                borderBottom: `1px solid ${COLORS.borderDefault}`,
-                backgroundColor: COLORS.bgRow,
-                padding: '20px 32px',
-                alignItems: 'center',
-                minHeight: '80px',
+                fontSize: '16px',
+                color: COLORS.textSecondary,
+                backgroundColor: COLORS.bgSectionHeader,
+                padding: '16px 32px',
                 fontFamily: 'Open Sans, sans-serif',
+                fontWeight: '600',
+                borderTop: `1px solid ${COLORS.borderDefault}`,
               }}
             >
-              {/* Mercado */}
-              <div
-                style={{
-                  color: COLORS.textPrimary,
-                  textAlign: 'center',
-                  fontSize: '22px',
-                  fontWeight: '500',
-                }}
-              >
-                {market.market}
-              </div>
-
-              {/* Bookmaker */}
-              <div
-                style={{
-                  color: COLORS.textSecondary,
-                  textAlign: 'center',
-                  fontSize: '18px',
-                }}
-              >
-                {market.bookmaker}
-              </div>
-
-              {/* Selección */}
-              <div
-                style={{
-                  color: COLORS.textPrimary,
-                  textAlign: 'center',
-                  fontSize: '20px',
-                }}
-              >
-                {market.selection}
-              </div>
-
-              {/* Momio (odds) - NORMAL */}
-              <div
-                style={{
-                  color: COLORS.textPrimary,
-                  fontWeight: '600',
-                  textAlign: 'center',
-                  fontFamily: 'Montserrat, sans-serif',
-                  fontSize: '24px',
-                }}
-              >
-                {market.odds}
-              </div>
-
-              {/* Prob. M - NORMAL */}
-              <div
-                style={{
-                  color: COLORS.textSecondary,
-                  textAlign: 'center',
-                  fontSize: '18px',
-                  fontWeight: '600',
-                }}
-              >
-                {((1 / parseFloat(market.odds)) * 100).toFixed(1)}%
-              </div>
-
-              {/* ⭐ PROB. IA - HIGHLIGHT CON ANIMACIÓN ⭐ */}
-              <div
-                style={{
-                  color: COLORS.textPositive,
-                  fontWeight: 'bold',
-                  textAlign: 'center',
-                  fontFamily: 'Montserrat, sans-serif',
-                  fontSize: '40px', // MÁS GRANDE
-                  transform: `scale(${scale * pulse})`,
-                  transition: 'transform 0.3s ease',
-                }}
-              >
-                {market.probIA}%
-              </div>
-
-              {/* ⭐ EV - HIGHLIGHT CON ANIMACIÓN ⭐ */}
-              <div
-                style={{
-                  color: COLORS.textPositive,
-                  fontWeight: 'bold',
-                  textAlign: 'center',
-                  fontFamily: 'Montserrat, sans-serif',
-                  fontSize: '40px', // MÁS GRANDE
-                  transform: `scale(${scale * pulse})`,
-                  transition: 'transform 0.3s ease',
-                }}
-              >
-                +{market.ev}%
-              </div>
+              <div style={{ textAlign: 'left' }}>{group.marketName}</div>
+              <div style={{ textAlign: 'center' }}>Book</div>
+              <div style={{ textAlign: 'center' }}>Momio</div>
+              <div style={{ textAlign: 'center' }}>Prob. M</div>
+              <div style={{ textAlign: 'center', fontWeight: 'bold', color: COLORS.textPositive }}>Prob. IA</div>
+              <div style={{ textAlign: 'center', fontWeight: 'bold', color: COLORS.textPositive }}>EV</div>
             </div>
-          );
-        })}
+
+            {/* Options Rows */}
+            {group.options.map((option, optionIndex) => {
+              const scale = getValueScale(groupIndex, optionIndex);
+              const pulse = getPulse(groupIndex, optionIndex);
+              const gradeColor = getGradeColor(option.evGrade);
+
+              return (
+                <div
+                  key={optionIndex}
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1.3fr 1fr 0.9fr 0.9fr 1fr 0.7fr',
+                    gap: '0',
+                    fontSize: '16px',
+                    borderBottom: `1px solid ${COLORS.borderDefault}`,
+                    backgroundColor: COLORS.bgRow,
+                    padding: '16px 32px',
+                    alignItems: 'center',
+                    minHeight: '70px',
+                    fontFamily: 'Open Sans, sans-serif',
+                  }}
+                >
+                  {/* Selección */}
+                  <div
+                    style={{
+                      color: COLORS.textPrimary,
+                      textAlign: 'left',
+                      fontSize: '18px',
+                      fontWeight: '500',
+                    }}
+                  >
+                    {option.selection}
+                  </div>
+
+                  {/* Bookmaker */}
+                  <div
+                    style={{
+                      color: COLORS.textSecondary,
+                      textAlign: 'center',
+                      fontSize: '16px',
+                    }}
+                  >
+                    {option.bookmaker}
+                  </div>
+
+                  {/* Odds */}
+                  <div
+                    style={{
+                      color: COLORS.textPrimary,
+                      fontWeight: '700',
+                      textAlign: 'center',
+                      fontFamily: 'Montserrat, sans-serif',
+                      fontSize: '20px',
+                    }}
+                  >
+                    {option.odds}
+                  </div>
+
+                  {/* Prob. M */}
+                  <div
+                    style={{
+                      color: COLORS.textSecondary,
+                      textAlign: 'center',
+                      fontSize: '16px',
+                      fontWeight: '500',
+                    }}
+                  >
+                    {option.probM}%
+                  </div>
+
+                  {/* Prob. IA - HIGHLIGHT */}
+                  <div
+                    style={{
+                      color: COLORS.textPositive,
+                      fontWeight: 'bold',
+                      textAlign: 'center',
+                      fontFamily: 'Montserrat, sans-serif',
+                      fontSize: '32px',
+                      transform: `scale(${scale * pulse})`,
+                      transition: 'transform 0.3s ease',
+                    }}
+                  >
+                    {option.probIA}%
+                  </div>
+
+                  {/* EV Grade - HIGHLIGHT */}
+                  <div
+                    style={{
+                      color: gradeColor,
+                      fontWeight: 'bold',
+                      textAlign: 'center',
+                      fontFamily: 'Montserrat, sans-serif',
+                      fontSize: '32px',
+                      transform: `scale(${scale * pulse})`,
+                      transition: 'transform 0.3s ease',
+                    }}
+                  >
+                    {option.evGrade}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        ))}
       </div>
     </div>
   );

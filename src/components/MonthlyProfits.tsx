@@ -61,14 +61,14 @@ export const MonthlyProfits: React.FC<MonthlyProfitsProps> = ({
     }).format(num);
   };
 
-  const fadeIn = interpolate(frame, [0, 15], [0, 1], {
+  const fadeIn = interpolate(frame, [2, 17], [0, 1], {
     extrapolateRight: 'clamp',
     easing: Easing.out(Easing.ease),
   });
 
   const daysAnimated = interpolate(
     frame,
-    [15, 60],
+    [17, 60],
     [0, calendarDays.length],
     {
       extrapolateRight: 'clamp',
