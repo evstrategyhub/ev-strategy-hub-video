@@ -26,7 +26,7 @@ export const MonthlyProfits: React.FC<MonthlyProfitsProps> = ({
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  const daysOfWeek = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+  const daysOfWeek = ['D', 'L', 'M', 'M', 'J', 'V', 'S'];
 
   const getDaysInMonth = (date: Date) => {
     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
@@ -56,20 +56,9 @@ export const MonthlyProfits: React.FC<MonthlyProfitsProps> = ({
 
   const formatNumber = (num: number): string => {
     return new Intl.NumberFormat('es-MX', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(num);
-  };
-
-  const formatNumberInt = (num: number): string => {
-    return new Intl.NumberFormat('es-MX', {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(num);
-  };
-
-  const formatMonthYear = (date: Date): string => {
-    return date.toLocaleDateString('es-MX', { month: 'long', year: 'numeric' });
   };
 
   const fadeIn = interpolate(frame, [0, 15], [0, 1], {
@@ -92,88 +81,57 @@ export const MonthlyProfits: React.FC<MonthlyProfitsProps> = ({
     <AbsoluteFill
       style={{
         backgroundColor: '#111827',
-        padding: '40px',
+        padding: '60px 40px',
         opacity: fadeIn,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
       }}
     >
+      {/* Calendar - CENTRADO Y GRANDE */}
       <div
         style={{
           backgroundColor: '#1f2937',
-          borderRadius: '12px',
-          border: '1px solid #374151',
-          padding: '32px',
+          padding: '40px',
+          borderRadius: '16px',
+          width: '100%',
+          maxWidth: '1000px',
         }}
       >
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr 1fr 1fr',
-            gap: '16px',
-            marginBottom: '32px',
-          }}
-        >
-          <div style={{ textAlign: 'center' }}>
-            <p style={{ color: '#9ca3af', fontSize: '16px', marginBottom: '8px', fontFamily: 'Montserrat, sans-serif' }}>
-              Ganancias Totales
-            </p>
-            <p style={{ fontSize: '32px', fontWeight: 'bold', color: totalProfit >= 0 ? '#22c55e' : '#ef4444', fontFamily: 'Poppins, sans-serif' }}>
-              ${formatNumber(Math.abs(totalProfit))}
-            </p>
-          </div>
-
-          <div style={{ textAlign: 'center' }}>
-            <p style={{ color: '#9ca3af', fontSize: '16px', marginBottom: '8px', fontFamily: 'Montserrat, sans-serif' }}>
-              Promedio Diario
-            </p>
-            <p style={{ fontSize: '32px', fontWeight: 'bold', color: averageDailyProfit >= 0 ? '#22c55e' : '#ef4444', fontFamily: 'Poppins, sans-serif' }}>
-              ${formatNumber(Math.abs(averageDailyProfit))}
-            </p>
-          </div>
-
-          <div style={{ textAlign: 'center' }}>
-            <p style={{ color: '#9ca3af', fontSize: '16px', marginBottom: '8px', fontFamily: 'Montserrat, sans-serif' }}>
-              Mejor Día
-            </p>
-            <p style={{ fontSize: '32px', fontWeight: 'bold', color: '#22c55e', fontFamily: 'Poppins, sans-serif' }}>
-              Día {bestDay.date}: ${formatNumber(bestDay.profit)}
-            </p>
-          </div>
-
-          <div style={{ textAlign: 'center' }}>
-            <p style={{ color: '#9ca3af', fontSize: '16px', marginBottom: '8px', fontFamily: 'Montserrat, sans-serif' }}>
-              Peor Día
-            </p>
-            <p style={{ fontSize: '32px', fontWeight: 'bold', color: '#ef4444', fontFamily: 'Poppins, sans-serif' }}>
-              {worstDay.profit === Infinity ? 'Sin pérdidas' : `Día ${worstDay.date}: $${formatNumber(Math.abs(worstDay.profit))}`}
-            </p>
-          </div>
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '8px', textAlign: 'center' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: '14px', textAlign: 'center' }}>
+          {/* Headers días */}
           {daysOfWeek.map((day, index) => (
             <div
               key={`header-${index}`}
-              style={{ color: '#9ca3af', fontSize: '16px', fontFamily: 'Montserrat, sans-serif', marginBottom: '8px' }}
+              style={{
+                color: '#d1d5db',
+                fontSize: '28px',
+                fontWeight: '700',
+                fontFamily: 'Montserrat, sans-serif',
+                marginBottom: '20px',
+              }}
             >
               {day}
             </div>
           ))}
 
+          {/* Days */}
           {calendarDays.map((day, index) => {
             const isVisible = index < Math.floor(daysAnimated);
             return (
               <div
                 key={`day-${index}`}
                 style={{
-                  padding: '12px',
-                  borderRadius: '8px',
-                  fontSize: '18px',
+                  padding: '24px 16px',
+                  borderRadius: '12px',
+                  fontSize: '32px',
+                  fontWeight: '700',
                   backgroundColor: day
                     ? day.profit > 0
                       ? '#14532d'
                       : day.profit < 0
                       ? '#7f1d1d'
-                      : '#1f2937'
+                      : '#374151'
                     : 'transparent',
                   color: '#ffffff',
                   fontFamily: 'Montserrat, sans-serif',
@@ -184,9 +142,9 @@ export const MonthlyProfits: React.FC<MonthlyProfitsProps> = ({
               >
                 {day ? (
                   <>
-                    <div style={{ marginBottom: '4px' }}>{day.day}</div>
-                    <div style={{ fontSize: '14px', color: day.profit >= 0 ? '#22c55e' : '#ef4444' }}>
-                      {formatNumberInt(Math.abs(day.profit))}
+                    <div style={{ marginBottom: '10px' }}>{day.day}</div>
+                    <div style={{ fontSize: '22px', fontWeight: '600', color: day.profit >= 0 ? '#22c55e' : '#ef4444' }}>
+                      {formatNumber(Math.abs(day.profit))}
                     </div>
                   </>
                 ) : null}

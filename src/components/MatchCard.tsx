@@ -1,5 +1,5 @@
 import React from 'react';
-import { useCurrentFrame, useVideoConfig, interpolate, Easing } from 'remotion';
+import { useCurrentFrame, useVideoConfig, interpolate, Easing, spring } from 'remotion';
 
 interface Market {
   bookmaker: string;
@@ -8,7 +8,6 @@ interface Market {
   odds: string;
   probIA: string;
   ev: string;
-  rating: string;
 }
 
 interface MatchCardProps {
@@ -27,19 +26,6 @@ const COLORS = {
   textPrimary: '#ffffff',
   textSecondary: '#9ca3af',
   textPositive: '#22c55e',
-  ratingA: '#22c55e',
-  ratingB: '#22c55e',
-  ratingC: '#86efac',
-  buttonGreen: '#16a34a',
-};
-
-const getRatingColor = (rating: string): string => {
-  const colors: Record<string, string> = {
-    A: COLORS.ratingA,
-    B: COLORS.ratingB,
-    C: COLORS.ratingC,
-  };
-  return colors[rating] || COLORS.ratingC;
 };
 
 export const MatchCard: React.FC<MatchCardProps> = ({
@@ -53,53 +39,66 @@ export const MatchCard: React.FC<MatchCardProps> = ({
       market: 'Ganador',
       selection: 'Local',
       odds: '1.91',
-      probIA: '54.2%',
-      ev: '+8.3%',
-      rating: 'B',
+      probIA: '54.2',
+      ev: '8.3',
     },
     {
       bookmaker: 'Betway',
       market: 'Ambos Anotan',
       selection: 'Sí',
       odds: '2.45',
-      probIA: '52.8%',
-      ev: '+5.7%',
-      rating: 'C',
+      probIA: '52.8',
+      ev: '5.7',
     },
     {
       bookmaker: 'bet365',
       market: 'Total Goles',
       selection: 'Más 2.5',
       odds: '1.95',
-      probIA: '58.1%',
-      ev: '+12.4%',
-      rating: 'A',
+      probIA: '58.1',
+      ev: '12.4',
     },
   ],
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // Animación de entrada
-  const fadeIn = interpolate(frame, [0, fps * 0.5], [0, 1], {
+  // Animación de entrada del CARD COMPLETO
+  const cardFadeIn = interpolate(frame, [0, fps * 0.5], [0, 1], {
     extrapolateRight: 'clamp',
     easing: Easing.out(Easing.ease),
   });
 
-  const slideUp = interpolate(frame, [0, fps * 0.5], [50, 0], {
+  const cardSlideUp = interpolate(frame, [0, fps * 0.5], [50, 0], {
     extrapolateRight: 'clamp',
     easing: Easing.out(Easing.ease),
   });
 
-  // Animación de filas (aparecen una por una)
-  const getRowOpacity = (index: number) => {
+  // Animación de SCALE para Prob IA y EV (LO IMPORTANTE - EL HIGHLIGHT)
+  const getValueScale = (index: number) => {
+    const startFrame = fps * 0.6 + index * 8;
+    return spring({
+      frame: frame - startFrame,
+      fps,
+      config: {
+        damping: 10,
+        stiffness: 120,
+        mass: 0.5,
+      },
+    });
+  };
+
+  // Pulso sutil en Prob IA y EV
+  const getPulse = (index: number) => {
+    const delay = fps * 1.2 + index * 8;
+    if (frame < delay) return 1;
+    
     return interpolate(
-      frame,
-      [fps * 0.5 + index * 10, fps * 0.5 + index * 10 + 15],
-      [0, 1],
+      (frame - delay) % 30,
+      [0, 15, 30],
+      [1, 1.08, 1],
       {
-        extrapolateRight: 'clamp',
-        easing: Easing.out(Easing.ease),
+        easing: Easing.inOut(Easing.ease),
       }
     );
   };
@@ -108,8 +107,13 @@ export const MatchCard: React.FC<MatchCardProps> = ({
     <div
       style={{
         padding: '40px',
-        opacity: fadeIn,
-        transform: `translateY(${slideUp}px)`,
+        opacity: cardFadeIn,
+        transform: `translateY(${cardSlideUp}px)`,
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '100%',
+        height: '100%',
       }}
     >
       {/* Card Container */}
@@ -119,6 +123,8 @@ export const MatchCard: React.FC<MatchCardProps> = ({
           borderRadius: '12px',
           border: `1px solid ${COLORS.borderDefault}`,
           overflow: 'hidden',
+          width: '980px',
+          maxWidth: '980px',
         }}
       >
         {/* Header */}
@@ -126,7 +132,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({
           style={{
             backgroundColor: COLORS.bgHeader,
             borderBottom: `1px solid ${COLORS.borderDefault}`,
-            padding: '24px 32px',
+            padding: '32px',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
@@ -136,7 +142,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({
             <div
               style={{
                 color: COLORS.textPrimary,
-                fontSize: '32px',
+                fontSize: '30px',
                 fontWeight: 'bold',
                 fontFamily: 'Montserrat, sans-serif',
                 marginBottom: '8px',
@@ -147,7 +153,7 @@ export const MatchCard: React.FC<MatchCardProps> = ({
             <div
               style={{
                 color: COLORS.textSecondary,
-                fontSize: '18px',
+                fontSize: '20px',
                 fontFamily: 'Open Sans, sans-serif',
               }}
             >
@@ -160,147 +166,157 @@ export const MatchCard: React.FC<MatchCardProps> = ({
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: '1.5fr 1.2fr 1fr 0.8fr 1fr 0.8fr 0.6fr 0.7fr',
+            gridTemplateColumns: '1.2fr 1.5fr 1.2fr 0.9fr 1fr 1fr 1fr',
             gap: '0',
-            fontSize: '16px',
+            fontSize: '18px',
             color: COLORS.textSecondary,
             backgroundColor: COLORS.bgHeader,
-            padding: '16px 32px',
+            padding: '20px 32px',
             fontFamily: 'Open Sans, sans-serif',
+            fontWeight: '500',
           }}
         >
-          <div style={{ textAlign: 'center' }}>Bookmaker</div>
           <div style={{ textAlign: 'center' }}>Mercado</div>
+          <div style={{ textAlign: 'center' }}>Bookmaker</div>
           <div style={{ textAlign: 'center' }}>Selección</div>
-          <div style={{ textAlign: 'center' }}>Cuota</div>
+          <div style={{ textAlign: 'center' }}>Momio</div>
           <div style={{ textAlign: 'center' }}>Prob. M</div>
-          <div style={{ textAlign: 'center', fontWeight: 'bold', color: COLORS.textPositive }}>
+          {/* PROB IA - HEADER EN VERDE Y MÁS GRANDE */}
+          <div 
+            style={{ 
+              textAlign: 'center', 
+              fontWeight: 'bold', 
+              color: COLORS.textPositive,
+              fontSize: '22px',
+            }}
+          >
             Prob. IA
           </div>
-          <div style={{ textAlign: 'center', fontWeight: 'bold', color: COLORS.textPositive }}>
-            EV
+          {/* EV - HEADER EN VERDE Y MÁS GRANDE */}
+          <div 
+            style={{ 
+              textAlign: 'center', 
+              fontWeight: 'bold', 
+              color: COLORS.textPositive,
+              fontSize: '22px',
+            }}
+          >
+            EV (%)
           </div>
-          <div style={{ textAlign: 'center' }}>Rating</div>
         </div>
 
         {/* Table Rows */}
-        {markets.map((market, index) => (
-          <div
-            key={index}
-            style={{
-              display: 'grid',
-              gridTemplateColumns: '1.5fr 1.2fr 1fr 0.8fr 1fr 0.8fr 0.6fr 0.7fr',
-              gap: '0',
-              fontSize: '16px',
-              borderBottom: `1px solid ${COLORS.borderDefault}`,
-              backgroundColor: COLORS.bgRow,
-              padding: '16px 32px',
-              alignItems: 'center',
-              minHeight: '60px',
-              opacity: getRowOpacity(index),
-              fontFamily: 'Open Sans, sans-serif',
-            }}
-          >
-            {/* Bookmaker */}
+        {markets.map((market, index) => {
+          const scale = getValueScale(index);
+          const pulse = getPulse(index);
+          
+          return (
             <div
+              key={index}
               style={{
-                color: COLORS.textPrimary,
-                textAlign: 'center',
+                display: 'grid',
+                gridTemplateColumns: '1.2fr 1.5fr 1.2fr 0.9fr 1fr 1fr 1fr',
+                gap: '0',
+                fontSize: '18px',
+                borderBottom: `1px solid ${COLORS.borderDefault}`,
+                backgroundColor: COLORS.bgRow,
+                padding: '20px 32px',
+                alignItems: 'center',
+                minHeight: '80px',
+                fontFamily: 'Open Sans, sans-serif',
               }}
             >
-              {market.bookmaker}
-            </div>
-
-            {/* Mercado */}
-            <div
-              style={{
-                color: COLORS.textSecondary,
-                textAlign: 'center',
-              }}
-            >
-              {market.market}
-            </div>
-
-            {/* Selección */}
-            <div
-              style={{
-                color: COLORS.textPrimary,
-                textAlign: 'center',
-              }}
-            >
-              {market.selection}
-            </div>
-
-            {/* Cuota */}
-            <div
-              style={{
-                color: COLORS.textPrimary,
-                fontWeight: 'bold',
-                textAlign: 'center',
-                fontFamily: 'Montserrat, sans-serif',
-              }}
-            >
-              {market.odds}
-            </div>
-
-            {/* Prob. M */}
-            <div
-              style={{
-                color: COLORS.textSecondary,
-                textAlign: 'center',
-              }}
-            >
-              {((1 / parseFloat(market.odds)) * 100).toFixed(1)}%
-            </div>
-
-            {/* Prob. IA */}
-            <div
-              style={{
-                color: COLORS.textPositive,
-                fontWeight: 'bold',
-                textAlign: 'center',
-                fontFamily: 'Montserrat, sans-serif',
-              }}
-            >
-              {market.probIA}
-            </div>
-
-            {/* EV */}
-            <div
-              style={{
-                color: COLORS.textPositive,
-                fontWeight: 'bold',
-                textAlign: 'center',
-                fontFamily: 'Montserrat, sans-serif',
-              }}
-            >
-              {market.ev}
-            </div>
-
-            {/* Rating */}
-            <div
-              style={{
-                textAlign: 'center',
-                display: 'flex',
-                justifyContent: 'center',
-              }}
-            >
-              <span
+              {/* Mercado */}
+              <div
                 style={{
-                  backgroundColor: getRatingColor(market.rating),
-                  color: '#ffffff',
-                  padding: '6px 12px',
-                  borderRadius: '6px',
-                  fontSize: '16px',
-                  fontWeight: 'bold',
-                  fontFamily: 'Montserrat, sans-serif',
+                  color: COLORS.textPrimary,
+                  textAlign: 'center',
+                  fontSize: '22px',
+                  fontWeight: '500',
                 }}
               >
-                {market.rating}
-              </span>
+                {market.market}
+              </div>
+
+              {/* Bookmaker */}
+              <div
+                style={{
+                  color: COLORS.textSecondary,
+                  textAlign: 'center',
+                  fontSize: '18px',
+                }}
+              >
+                {market.bookmaker}
+              </div>
+
+              {/* Selección */}
+              <div
+                style={{
+                  color: COLORS.textPrimary,
+                  textAlign: 'center',
+                  fontSize: '20px',
+                }}
+              >
+                {market.selection}
+              </div>
+
+              {/* Momio (odds) - NORMAL */}
+              <div
+                style={{
+                  color: COLORS.textPrimary,
+                  fontWeight: '600',
+                  textAlign: 'center',
+                  fontFamily: 'Montserrat, sans-serif',
+                  fontSize: '24px',
+                }}
+              >
+                {market.odds}
+              </div>
+
+              {/* Prob. M - NORMAL */}
+              <div
+                style={{
+                  color: COLORS.textSecondary,
+                  textAlign: 'center',
+                  fontSize: '18px',
+                  fontWeight: '600',
+                }}
+              >
+                {((1 / parseFloat(market.odds)) * 100).toFixed(1)}%
+              </div>
+
+              {/* ⭐ PROB. IA - HIGHLIGHT CON ANIMACIÓN ⭐ */}
+              <div
+                style={{
+                  color: COLORS.textPositive,
+                  fontWeight: 'bold',
+                  textAlign: 'center',
+                  fontFamily: 'Montserrat, sans-serif',
+                  fontSize: '40px', // MÁS GRANDE
+                  transform: `scale(${scale * pulse})`,
+                  transition: 'transform 0.3s ease',
+                }}
+              >
+                {market.probIA}%
+              </div>
+
+              {/* ⭐ EV - HIGHLIGHT CON ANIMACIÓN ⭐ */}
+              <div
+                style={{
+                  color: COLORS.textPositive,
+                  fontWeight: 'bold',
+                  textAlign: 'center',
+                  fontFamily: 'Montserrat, sans-serif',
+                  fontSize: '40px', // MÁS GRANDE
+                  transform: `scale(${scale * pulse})`,
+                  transition: 'transform 0.3s ease',
+                }}
+              >
+                +{market.ev}%
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
